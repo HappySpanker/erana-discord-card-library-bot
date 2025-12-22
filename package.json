@@ -23,6 +23,10 @@
   "author": "HappySpanker",
   "type": "module",
   "main": "dist/index.js",
-  "scripts": {
+  "scripts": {},
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.3",
+    "@types/node": "^25.0.3",
+    "typescript": "^5.9.3"
   }
 }
