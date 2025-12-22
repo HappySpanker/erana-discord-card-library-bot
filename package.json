@@ -1,0 +1,28 @@
+{
+  "name": "erana-discord-card-library-bot",
+  "version": "0.0.1",
+  "description": "A tavern card library exposed via a Discord bot",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "card",
+    "tavern"
+  ],
+  "homepage": "https://github.com/HappySpanker/erana-discord-card-library-bot#readme",
+  "bugs": {
+    "url": "https://github.com/HappySpanker/erana-discord-card-library-bot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HappySpanker/erana-discord-card-library-bot.git"
+  },
+  "license": "MIT",
+  "author": "HappySpanker",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+  }
+}
