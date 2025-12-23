@@ -27,7 +27,11 @@
     "prebuild": "npm run clean",
     "build": "tsc",
     "clean": "rm -rf ./dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docker:build-local": "docker build -t erana/discord-bot:dev .",
+    "docker:run-local": "docker run --rm --name erana-discord-bot erana/discord-bot:dev",
+    "docker:build": "DOCKER_HOST=ssh://docker-host docker build -t erana/discord-bot:dev .",
+    "docker:run": "DOCKER_HOST=ssh://docker-host docker run --rm --name erana-discord-bot erana/discord-bot:dev"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
