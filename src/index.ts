@@ -1,19 +1,16 @@
-console.log("process started");
+import { Client, Events, GatewayIntentBits } from "discord.js";
+import { env } from "node:process";
 
-let shuttingDown = false;
+// Create a new client instance
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-async function shutdown(signal: string) {
-  if (shuttingDown) return;
-  shuttingDown = true;
+// When the client is ready, run this code (only once).
+// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
+// It makes some properties non-nullable.
+client.once(Events.ClientReady, (readyClient: Client<true>) => {
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+});
 
-  console.log(`Received ${signal}, shutting down`);
-  process.exit(0);
-}
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
-
-// Intentional keepalive
-setInterval(() => {
-  // heartbeat tick
-}, 60_000);
+// Log in to Discord with your client's token
+console.log(env.DISCORD_TOKEN);
+client.login(env.DISCORD_TOKEN);

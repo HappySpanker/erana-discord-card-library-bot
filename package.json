@@ -28,6 +28,7 @@
     "build": "tsc",
     "clean": "rm -rf ./dist",
     "typecheck": "tsc --noEmit",
+    "run": "node --env-file=.env ./dist/index.js",
     "docker:build-local": "docker build -t erana/discord-bot:dev .",
     "docker:run-local": "docker run --rm --name erana-discord-bot erana/discord-bot:dev",
     "docker:build": "DOCKER_HOST=ssh://docker-host docker build -t erana/discord-bot:dev .",
