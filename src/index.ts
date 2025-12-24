@@ -6,6 +6,8 @@ if (!process.env.DISCORD_TOKEN) {
 
 const discordClient = new DiscordClient()
 
+discordClient.registerSlashCommands();
+
 discordClient.registerClientReady();
 
 await discordClient.connect();
