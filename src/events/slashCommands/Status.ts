@@ -1,15 +1,6 @@
-import { CacheType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
-
-export type StatusValue = {
-    Erana: {
-        Uptime: string
-    },
-    System: {
-        Uptime: string,
-        Hostname: string
-    }
-}
+import { StatusOrchestration, StatusValue } from "../../orchestration/StatusOrchestration.js";
 
 export const StatusSlashCommandBuilder =
     new SlashCommandBuilder()
@@ -21,21 +12,15 @@ export const StatusSlashCommandBuilder =
  */
 export class StatusSlashCommandHandler implements ISlashCommandHandler {
     public async handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        await interaction.deferReply();
+        await interaction.deferReply({
+            flags: MessageFlags.Ephemeral
+        });
 
-        // Get status from backend; for now...
-        const statusValue: StatusValue = {
-            Erana: {
-                Uptime: "234 years"
-            },
-            System: {
-                Uptime: "345 years",
-                Hostname: "localhost"
-            }
-        }
+        const statusValue = await new StatusOrchestration()
+            .orchestrate();
 
         await interaction.editReply({
-            embeds: [this.statusEmbedBuilder(statusValue)]
+            embeds: [this.statusEmbedBuilder(statusValue)],
         })
     }
 
