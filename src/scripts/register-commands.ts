@@ -1,5 +1,5 @@
 import { REST, Routes } from "discord.js";
-import { statusCommandBuilder } from "../events/commands/statusCommandBuilder.js";
+import { StatusSlashCommandBuilder } from "../events/slashCommands/Status.js";
 
 const rest = new REST({ version: "10" }).setToken(
   process.env.DISCORD_TOKEN!
@@ -13,7 +13,7 @@ async function register() {
     ),
     {
       body: [
-        statusCommandBuilder.toJSON()
+        StatusSlashCommandBuilder.toJSON()
       ]
     }
   );

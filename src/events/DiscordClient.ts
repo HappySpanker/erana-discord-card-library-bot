@@ -1,4 +1,5 @@
-import { CacheType, ChatInputCommandInteraction, Client, CommandInteraction, Events, GatewayIntentBits, Interaction, MessageFlags } from "discord.js";
+import { Client, Events, GatewayIntentBits, Interaction } from "discord.js";
+import { StatusSlashCommandHandler } from "./slashCommands/Status.js";
 
 export class DiscordClient {
 
@@ -27,7 +28,17 @@ export class DiscordClient {
             async (interaction: Interaction) => {
                 if (!interaction.isChatInputCommand()) return;
                 
-                await interaction.reply("noop");
+                switch (interaction.commandName) {
+                    case "status":
+                        const sch = new StatusSlashCommandHandler();
+                        sch.handle(interaction);
+                        break;
+                
+                    default:
+                        console.error(`Received command "${interaction.commandName}" but command not found!`);
+                        break;
+                }
+
             }
         );
     }
