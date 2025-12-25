@@ -27,24 +27,25 @@ export class StatusSlashCommandHandler implements ISlashCommandHandler {
     private statusEmbedBuilder(statusValue: StatusValue): EmbedBuilder {
         return new EmbedBuilder()
             .setTitle("Erana status")
-            .setDescription("Operation status of Erana")
             .addFields({
                 name: "🧝‍♀️ Erana",
                 value: [
-                    `Uptime: ${statusValue.Erana.Uptime}`
+                    `__Uptime__: *${statusValue.Erana.Uptime || "Error"}*`
                 ].join("\n"),
-                inline: true
             })
             .addFields({
                 name: "🖥️ System",
                 value: [
-                    `Uptime: ${statusValue.System.Uptime}`,
-                    `Hostname: ${statusValue.System.Hostname}`
+                    `__Uptime__: *${statusValue.System.Uptime || "Error"}*`,
+                    `__Hostname__: *${statusValue.System.Hostname || "Error"}*`
                 ].join("\n"),
-                inline: true
             })
-            .setFooter({
-                text: "woot!"
+            .addFields({
+                name: "🧰 Services",
+                value: [
+                    "__Cache__: ❌ **DOWN** *(redis)*",
+                    "__Store__: ✅ **UP** *(postgresql)*",
+                ].join("\n")
             })
     }
 
