@@ -2,19 +2,20 @@ import { Client, Events, GatewayIntentBits, Interaction, MessageFlags } from "di
 import { StatusSlashCommandHandler } from "./slashCommands/Status.js";
 
 export class DiscordClient {
+    /**
+     * Create a new Discord.js client
+     */
+    private _client = new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent
+        ]
+    });
 
-    private _client: Client<true>;
-
-    constructor() {
-        this._client = new Client({
-            intents: [
-                GatewayIntentBits.Guilds,
-                GatewayIntentBits.GuildMessages,
-                GatewayIntentBits.MessageContent
-            ]
-        });
-    }
-
+    /**
+     * Login to the given client
+     */
     public async connect(): Promise<void> {
         await this._client.login(process.env.DISCORD_TOKEN);
     }
