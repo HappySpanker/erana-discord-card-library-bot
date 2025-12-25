@@ -39,10 +39,12 @@
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
+    "@types/humanize-duration": "^3.27.4",
     "@types/node": "^25.0.3",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "discord.js": "^14.25.1"
+    "discord.js": "^14.25.1",
+    "humanize-duration": "^3.33.2"
   }
 }

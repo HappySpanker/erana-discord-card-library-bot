@@ -1,3 +1,5 @@
+import { ApplicationService, IApplicationService } from "../logic/ApplicationService.js";
+import { ISystemService, SystemService } from "../logic/SystemService.js";
 import { IOrchestration } from "./interfaces/IOrchestration.js";
 
 export type StatusValue = {
@@ -13,15 +15,21 @@ export type StatusValue = {
 export class StatusOrchestration
     implements IOrchestration<void, StatusValue> {
 
+    private readonly _applicationServices: IApplicationService
+        = new ApplicationService();
+
+    private readonly _systemService: ISystemService
+        = new SystemService();
+
     async orchestrate(payload: void): Promise<StatusValue> {
         
         return await Promise.resolve({
             Erana: {
-                Uptime: "Unknown"
+                Uptime: this._applicationServices.uptime
             },
             System: {
-                Uptime: "Unknown",
-                Hostname: "Unknown"
+                Hostname: this._systemService.hostname,
+                Uptime: this._systemService.uptime
             }
         })
     }
