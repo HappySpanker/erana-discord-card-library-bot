@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, Interaction } from "discord.js";
+import { Client, Events, GatewayIntentBits, Interaction, MessageFlags } from "discord.js";
 import { StatusSlashCommandHandler } from "./slashCommands/Status.js";
 
 export class DiscordClient {
@@ -33,9 +33,17 @@ export class DiscordClient {
                         const sch = new StatusSlashCommandHandler();
                         sch.handle(interaction);
                         break;
+
+                    case "cards":
+                        interaction.reply({ 
+                            content: `Okidoki! target:${interaction.options.getUser("target", true).displayName}, search:${interaction.options.getString("search", false)}`,
+                            flags: MessageFlags.Ephemeral
+                        });
+                        break;
                 
                     default:
                         console.error(`Received command "${interaction.commandName}" but command not found!`);
+                        console.debug(interaction);
                         break;
                 }
 
