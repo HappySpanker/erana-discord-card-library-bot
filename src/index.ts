@@ -63,8 +63,6 @@ if (!process.env.DISCORD_TOKEN) {
   throw new Error("Discord token expected in environment variables but not found.")
 }
 
-throw new Error("test");
-
 const discordClient = new DiscordClient()
 
 discordClient.registerSlashCommands();

@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "discord.js": "^14.25.1",
-    "humanize-duration": "^3.33.2"
+    "humanize-duration": "^3.33.2",
+    "pino": "^10.1.0"
   }
 }
