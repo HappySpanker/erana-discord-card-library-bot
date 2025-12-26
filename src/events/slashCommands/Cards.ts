@@ -1,4 +1,5 @@
-import { SlashCommandBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
 
 export const CardsSlashCommandBuilder = new SlashCommandBuilder()
   .setName("cards")
@@ -35,3 +36,9 @@ export const CardsSlashCommandBuilder = new SlashCommandBuilder()
           .setDescription("List my cards")
       )
   )
+
+export class CardsSlashCommandsHandler implements ISlashCommandHandler {
+  async handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+}
