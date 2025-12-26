@@ -24,18 +24,15 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "prebuild": "npm run clean",
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "clean": "rm -rf ./dist",
     "typecheck": "tsc --noEmit",
-    "prerun": "npm run build",
-    "run": "node --env-file=.env ./dist/index.js",
-    "preregister:commands": "npm run build",
-    "register:commands": "node --env-file .env ./dist/scripts/register-commands.js",
-    "docker:build-local": "docker build -t erana/discord-bot:dev .",
-    "docker:run-local": "docker run --rm --env-file .env --name erana-discord-bot erana/discord-bot:dev",
-    "docker:build": "DOCKER_HOST=ssh://docker-host docker build -t erana/discord-bot:dev .",
-    "docker:run": "DOCKER_HOST=ssh://docker-host docker run --rm --env-file .env  --name erana-discord-bot erana/discord-bot:dev"
+    "run": "npom run build && node --env-file=.env ./dist/index.js",
+    "register-commands:dev": "npm run built && node --env-file .env ./dist/scripts/register-commands.js",
+    "docker-build:dev": "docker build -t erana/discord-bot:dev .",
+    "docker-run:dev": "docker run --rm --env-file .env --name erana-discord-bot erana/discord-bot:dev",
+    "docker-build:tst": "DOCKER_HOST=ssh://docker-host docker build -t erana/discord-bot:dev .",
+    "docker-run:tst": "DOCKER_HOST=ssh://docker-host docker run --rm --env-file .env  --name erana-discord-bot erana/discord-bot:dev"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
