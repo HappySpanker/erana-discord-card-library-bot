@@ -1,9 +1,10 @@
-import { ChatInputCommandInteraction, CacheType, MessageFlags } from "discord.js";
+import { ChatInputCommandInteraction, CacheType, MessageFlags, EmbedBuilder, MessagePayload, InteractionEditReplyOptions } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
 import { StatusSlashCommandHandler } from "./Status.js";
 import { slashCommandInteractionLogger } from "../../logger.js";
 import { CardsSlashCommandsHandler } from "./Cards.js";
-import { GenericErrorEmbed, GenericExceptionEmbed } from "../Embeds.js";
+import { GenericErrorEmbed, GenericExceptionEmbed } from "../utils/Embeds.js";
+import { title } from "node:process";
 
 export class Dispatcher 
     implements ISlashCommandHandler {
@@ -39,17 +40,26 @@ export class Dispatcher
         try {
             await handler.handle(interaction);
         } catch(err) {
-            const msg = "Calling dispatched handler failed";
+            // Log
             logger.error({
                 err,
                 event: "slash_command_dispatch_error"
-            }, msg);
+            }, "Calling dispatched handler failed");
 
-            if(err instanceof Error) {
-                await interaction.reply({
-                    embeds: [ GenericExceptionEmbed(err) ],
-                    flags: MessageFlags.Ephemeral | MessageFlags.Urgent
-                });
+            // Prepare embed
+            const payload = {
+                embeds: [ err instanceof Error
+                    ? GenericExceptionEmbed(err)
+                    : GenericErrorEmbed(err) ],
+            };
+
+            // Reply/Edit/Followup
+            if (interaction.deferred) {
+                interaction.editReply(payload);
+            } else if (interaction.replied) {
+                interaction.followUp(payload);
+            } else {
+                interaction.reply(payload);
             }
         }
     }
