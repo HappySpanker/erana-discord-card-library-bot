@@ -27,7 +27,7 @@
     "build": "npm run clean && tsc",
     "clean": "rm -rf ./dist",
     "typecheck": "tsc --noEmit",
-    "run": "npom run build && node --env-file=.env ./dist/index.js",
+    "run": "npm run build && node --env-file=.env ./dist/index.js",
     "register-commands:dev": "npm run built && node --env-file .env ./dist/scripts/register-commands.js",
     "docker-build:dev": "docker build -t erana/discord-bot:dev .",
     "docker-run:dev": "docker run --rm --env-file .env --name erana-discord-bot erana/discord-bot:dev",

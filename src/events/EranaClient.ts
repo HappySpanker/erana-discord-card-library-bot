@@ -3,12 +3,12 @@ import { Dispatcher } from "./slashCommands/Dispatcher.js";
 import { ISlashCommandHandler } from "./slashCommands/interfaces/ICommandHandler.js";
 import { logger } from "../logger.js";
 
-export class DiscordClient {
+export class EranaClient extends Client<boolean> {
     /**
-     * Create a new Discord.js client
+     * Create a new EranaClient which inherits/extends from the base discord.js client
      */
-    private _client = 
-        new Client({
+    constructor() {
+        super({
             intents: [
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMessages,
@@ -16,31 +16,31 @@ export class DiscordClient {
             ]
         });
 
+        // Sanity checks
+        if (!process.env.DISCORD_TOKEN) {
+            throw new Error("Discord token expected in environment variables but not found.")
+        }
+        
+        // Handle login; Promise abuse but whatever
+        this.login(process.env.DISCORD_TOKEN)
+            .then((_) => this._handleClientReady())
+            .then((_) => this._addSlashCommandDispatcher());
+    }
+
     private _slashCommandDispatcher: ISlashCommandHandler =
         new Dispatcher();
 
     /**
-     * Connect the given client to discord
-     */
-    public async connect(): Promise<void> {
-        await this._client.login(process.env.DISCORD_TOKEN);
-
-        this._handleClientReady();
-    }
-
-    /**
      * Handle ClientReady event
      */
-    private _handleClientReady() {
-        this._client.once(
+    private async _handleClientReady(): Promise<void> {
+        this.once(
             Events.ClientReady, 
             async (readyClient: Client<true>) => {
                 logger.info({
                     event: "client_ready",
                     userTag: readyClient.user.tag
                 })
-
-                this._addSlashCommandDispatcher();
             });
     }
 
@@ -48,7 +48,7 @@ export class DiscordClient {
      * Handle Slash Commands
      */
     private _addSlashCommandDispatcher(): void {
-        this._client.on(
+        this.on(
             Events.InteractionCreate, 
             async (interaction: Interaction) => {
                 if (!interaction.isChatInputCommand()) return;

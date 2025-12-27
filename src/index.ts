@@ -1,4 +1,4 @@
-import { DiscordClient } from "./events/DiscordClient.js";
+import { EranaClient } from "./events/EranaClient.js";
 
 let isShuttingDown = false;
 
@@ -59,9 +59,4 @@ process.on("rejectionHandled", () => {
   console.warn("Late promise handler attached");
 });
 
-if (!process.env.DISCORD_TOKEN) {
-  throw new Error("Discord token expected in environment variables but not found.")
-}
-
-await new DiscordClient()
-  .connect();
+const client =  new EranaClient();
