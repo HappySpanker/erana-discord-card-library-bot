@@ -42,6 +42,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
     "discord.js": "^14.25.1",
     "humanize-duration": "^3.33.2",
     "pino": "^10.1.0"
