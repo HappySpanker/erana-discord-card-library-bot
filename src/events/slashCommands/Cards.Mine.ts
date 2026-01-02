@@ -1,6 +1,9 @@
-import { CacheType, ChatInputCommandInteraction, LabelBuilder, ModalBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, EmbedBuilder, LabelBuilder, MessageFlags, ModalBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { CardUpload } from "../modals/CardUpload.js";
 import { logger } from "../../logger.js";
+import { MyCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
+
+const myCardsOrchestrator = new MyCardsOrchestrator();
 
 /**
  * Handles calls for listing one's own cards
@@ -9,7 +12,33 @@ import { logger } from "../../logger.js";
 export async function CardsMineList(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
   logger.trace("Handling Cards:Mine:List");
 
-  interaction.reply("Bye bye!");
+  const cardsListResponse = await myCardsOrchestrator.listCards();
+
+  const embeds: Array<EmbedBuilder> = [];
+
+  for (let card of cardsListResponse.Items) {
+    embeds.push(new EmbedBuilder()
+      .setTitle(card.Name)
+      .setDescription(card.Tagline)
+      .setURL(card.URL));
+  }
+
+  const pagination = false;
+  let msg: string = "";
+
+  if (!pagination) {
+    msg = `Found a total of ${cardsListResponse.Items.length} card(s) belonging to you.`
+  } else {
+    msg = "Paginated reply"
+  }
+
+  await interaction.reply({
+    content: msg,
+    embeds: embeds,
+    flags: [
+      MessageFlags.Ephemeral
+    ]
+  });
 }
 
 export async function CardsMineUpload(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {

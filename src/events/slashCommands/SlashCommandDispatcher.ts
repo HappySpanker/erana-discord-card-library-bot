@@ -44,6 +44,8 @@ export class SlashCommandDispatcher {
                 err,
                 event: "slash_command_dispatch_error"
             }, "Calling dispatched handler failed");
+
+            // TODO: error handling
         }
     }
 }
