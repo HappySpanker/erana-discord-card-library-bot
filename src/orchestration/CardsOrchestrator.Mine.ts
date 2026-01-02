@@ -1,30 +1,53 @@
 import { IUploadMyCardsOrchestrator } from "./CardsOrchestrator.js";
 import { logger } from "../logger.js";
-import { TavernCardV2 } from "./models/Cards.js";
-import { CardListItem } from "./models/CardListItem.js";
+import { TavernCardV2 } from "../Cards.js";
 import { CardListResponse } from "./models/CardListResponse.js";
+import { Pagination } from "./models/Pagination.js";
+import { cardsService } from "../logic/CardService.js";
+import { CardListItem } from "./models/CardListItem.js";
 
-export interface IListMyCardsOrchestrator {
-  listCards(): Promise<CardListResponse>;
+export interface IListCardsOrchestrator {
+  listCards(pagination: Pagination, myUserId: string): Promise<CardListResponse>;
 }
 
 export class MyCardsOrchestrator implements
   IUploadMyCardsOrchestrator,
-  IListMyCardsOrchestrator {
+  IListCardsOrchestrator {
 
-  async listCards(): Promise<CardListResponse> {
+  async listCards(
+    pagination: Pagination, 
+    userId: string): Promise<CardListResponse> {
+    logger.trace({
+      pagination: pagination,
+      userId: userId,
+    }, "Orchestrating card listing");
+
+    // Get the cards
+    const cards = cardsService.ListCards();
+
+    // Populate response
     const cardListResponse: CardListResponse = {
-      Items: [],
+      Items: cards.map(container => {
+        const cardListItem: CardListItem = {
+          Name: "",
+          Tagline: container.Tagline ?? "Tagline not set",
+          UserId: userId,
+          URL: "http://localhost/" + Math.random(),
+          Created: container.Created,
+          Updated: container.Updated,
+        }
+        if (container.IsV1()) {
+          return Object.assign(cardListItem, { 
+            Name: container.Card.name
+          });
+        } else if (container.IsV2() || container.IsV3()) {
+          return Object.assign(cardListItem, { 
+            Name: container.Card.data.name
+          });
+        }
+        throw new Error("Could not determine card version");
+      }),
       Pagination: false
-    }
-    
-    for (let index = 1; index <= 10; index++) {
-      cardListResponse.Items.push({
-        Name: `Sample #${index}`,
-        Tagline: `This is the tagline for sample #${index}`,
-        URL: `http://localhost/sample/${index}`,
-        UserId: "12345"
-      })
     }
 
     return cardListResponse;

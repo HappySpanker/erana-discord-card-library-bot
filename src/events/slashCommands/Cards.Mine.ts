@@ -10,9 +10,18 @@ const myCardsOrchestrator = new MyCardsOrchestrator();
  * @param interaction An interaction that has not been replied to yet
  */
 export async function CardsMineList(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-  logger.trace("Handling Cards:Mine:List");
+  logger.trace({
+    commandPath: "Cards:Mine:List",
+    userId: interaction.user.id,
+    targetUserId: interaction.user.id,
+    interactionId: interaction.id,
+  }, "Handling Cards:Mine:List");
 
-  const cardsListResponse = await myCardsOrchestrator.listCards();
+  // Prepare intial call to orchestrator
+  const cardsListResponse = await myCardsOrchestrator.listCards(
+    false,
+    interaction.user.id
+  );
 
   const embeds: Array<EmbedBuilder> = [];
 
@@ -20,7 +29,10 @@ export async function CardsMineList(interaction: ChatInputCommandInteraction<Cac
     embeds.push(new EmbedBuilder()
       .setTitle(card.Name)
       .setDescription(card.Tagline)
-      .setURL(card.URL));
+      .setURL(card.URL)
+      .setFooter({
+        text: `Created: ${card.Created.toLocaleString(interaction.locale)}, updated: ${card.Updated.toLocaleString(interaction.locale)}`
+      }));
   }
 
   const pagination = false;

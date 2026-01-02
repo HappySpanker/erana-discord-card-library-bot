@@ -1,4 +1,4 @@
-import { CardContainer } from "./models/Cards.js";
+import { CardContainer } from "../Cards.js";
 
 export interface IUploadMyCardsOrchestrator {
     /**
