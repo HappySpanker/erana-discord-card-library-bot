@@ -21,13 +21,5 @@ export function GenericExceptionEmbed(err: Error): EmbedBuilder {
     return new EmbedBuilder()
         .setColor("Red")
         .setTitle(err.name)
-        .setDescription(err.message || "No details given")
-        .addFields({
-            name: "Stacktrace",
-            value: [
-                "```",
-                err.stack,
-                "```"
-            ].join("\n")
-        })
+        .setDescription(err.message || "No details given");
 }

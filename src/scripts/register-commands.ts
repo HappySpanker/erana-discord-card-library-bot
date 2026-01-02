@@ -20,7 +20,7 @@ async function register() {
     }
   );
 
-  console.log("Registered /status command");
+  console.log("Registered slash commands");
 }
 
 register().catch(err => {

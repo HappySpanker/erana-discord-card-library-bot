@@ -1,9 +1,13 @@
 import { Client, Events, GatewayIntentBits, Interaction, MessageFlags } from "discord.js";
-import { Dispatcher } from "./slashCommands/Dispatcher.js";
+import { SlashCommandDispatcher } from "./slashCommands/SlashCommandDispatcher.js";
 import { ISlashCommandHandler } from "./slashCommands/interfaces/ICommandHandler.js";
 import { logger } from "../logger.js";
+import { ModalDispatcher } from "./modals/ModalDispatcher.js";
 
 export class EranaClient extends Client<boolean> {
+    private _modalSubmitDispatcher = new ModalDispatcher();
+    private _slashCommandDispatcher = new SlashCommandDispatcher();
+
     /**
      * Create a new EranaClient which inherits/extends from the base discord.js client
      */
@@ -23,12 +27,10 @@ export class EranaClient extends Client<boolean> {
         
         // Handle login; Promise abuse but whatever
         this.login(process.env.DISCORD_TOKEN)
-            .then((_) => this._handleClientReady())
-            .then((_) => this._addSlashCommandDispatcher());
+            .then(_ => this._handleClientReady())
+            .then(_ => this._addSlashCommandDispatcher())
+            .then(_ => this._addModalSubmitDispatcher())
     }
-
-    private _slashCommandDispatcher: ISlashCommandHandler =
-        new Dispatcher();
 
     /**
      * Handle ClientReady event
@@ -47,14 +49,30 @@ export class EranaClient extends Client<boolean> {
     /**
      * Handle Slash Commands
      */
-    private _addSlashCommandDispatcher(): void {
+    private async _addSlashCommandDispatcher(): Promise<void> {
         this.on(
             Events.InteractionCreate, 
             async (interaction: Interaction) => {
-                if (!interaction.isChatInputCommand()) return;
-                
-                await this._slashCommandDispatcher.handle(interaction);
+                if (interaction.isChatInputCommand()) {                
+                    await this._slashCommandDispatcher.dispatch(interaction);
+                    return;
+                }
             }
         );
+    }
+
+    /**
+     * Handle modals
+     */
+    private async _addModalSubmitDispatcher(): Promise<void> {
+        this.on(
+            Events.InteractionCreate,
+            async (interaction: Interaction) => {
+                if (interaction.isModalSubmit()) {
+                    await this._modalSubmitDispatcher.dispatch(interaction);
+                    return;
+                }
+            }
+        )
     }
 }

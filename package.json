@@ -28,7 +28,7 @@
     "clean": "rm -rf ./dist",
     "typecheck": "tsc --noEmit",
     "run": "npm run build && node --env-file=.env ./dist/index.js | pino-pretty",
-    "register-commands:dev": "npm run built && node --env-file .env ./dist/scripts/register-commands.js",
+    "register-commands:dev": "npm run build && node --env-file .env ./dist/scripts/register-commands.js",
     "docker-build:dev": "docker build -t erana/discord-bot:dev .",
     "docker-run:dev": "docker run --rm --env-file .env --name erana-discord-bot erana/discord-bot:dev",
     "docker-build:tst": "DOCKER_HOST=ssh://docker-host docker build -t erana/discord-bot:dev .",

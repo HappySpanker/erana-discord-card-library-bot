@@ -6,14 +6,13 @@ import { CardsSlashCommandsHandler } from "./Cards.js";
 import { GenericErrorEmbed, GenericExceptionEmbed } from "../utils/Embeds.js";
 import { title } from "node:process";
 
-export class Dispatcher 
-    implements ISlashCommandHandler {
+export class SlashCommandDispatcher {
     private _handlerMapping = new Map<string, ISlashCommandHandler>([
         ["status", new StatusSlashCommandHandler()],
         ["cards", new CardsSlashCommandsHandler()],
     ]);
 
-    async handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+    async dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         const logger = slashCommandInteractionLogger(interaction);
 
         logger.debug(
@@ -45,22 +44,6 @@ export class Dispatcher
                 err,
                 event: "slash_command_dispatch_error"
             }, "Calling dispatched handler failed");
-
-            // Prepare embed
-            const payload = {
-                embeds: [ err instanceof Error
-                    ? GenericExceptionEmbed(err)
-                    : GenericErrorEmbed(err) ],
-            };
-
-            // Reply/Edit/Followup
-            if (interaction.deferred) {
-                interaction.editReply(payload);
-            } else if (interaction.replied) {
-                interaction.followUp(payload);
-            } else {
-                interaction.reply(payload);
-            }
         }
     }
 }
