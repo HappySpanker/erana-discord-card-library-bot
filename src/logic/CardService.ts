@@ -3,31 +3,23 @@ import { CardContainer, TavernCardV2 } from "../Cards.js";
 import { logger } from "../logger.js";
 import { Card } from "./models/Cards.js";
 import { Temporal } from "@js-temporal/polyfill";
+import { cardStore } from "../external/CardStore.js";
 
 export interface IListCardsService {
-  ListCards(): Array<CardContainer>;
+  ListCards(userId: string): Promise<Array<CardContainer>>;
 }
 
 class CardsService
   implements IListCardsService {
-  ListCards(): Array<CardContainer> {
+  async ListCards(userId: string): Promise<Array<CardContainer>> {
     logger.trace({
 
     }, "Servicing card listing");
 
-    const collection: Array<CardContainer> = [];
+    // TODO: try cache first
 
-    for (let index = 1; index <= 10; index++) {
-      collection.push(new CardContainer(
-        dummyCardGenerator(),
-        "12345",
-        Temporal.Now.instant(),
-        Temporal.Now.instant(),
-        "This is my tagline!"
-      ));
-    }
-
-    return collection;
+    // Direct access
+    return await cardStore.ListByUser(userId)
   }
 }
 

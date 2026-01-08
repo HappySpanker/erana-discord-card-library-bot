@@ -1,6 +1,6 @@
 import { IUploadMyCardsOrchestrator } from "./CardsOrchestrator.js";
 import { logger } from "../logger.js";
-import { TavernCardV2 } from "../Cards.js";
+import { CardContainer, TavernCardV2 } from "../Cards.js";
 import { CardListResponse } from "./models/CardListResponse.js";
 import { Pagination } from "./models/Pagination.js";
 import { cardsService } from "../logic/CardService.js";
@@ -14,8 +14,14 @@ export class MyCardsOrchestrator implements
   IUploadMyCardsOrchestrator,
   IListCardsOrchestrator {
 
+  /**
+   * List cards for a user
+   * @param pagination Should we use pagination and if so, where are we?
+   * @param userId List the cards for which user?
+   * @returns A list of cards for the requested user
+   */
   async listCards(
-    pagination: Pagination, 
+    pagination: Pagination,
     userId: string): Promise<CardListResponse> {
     logger.trace({
       pagination: pagination,
@@ -23,34 +29,13 @@ export class MyCardsOrchestrator implements
     }, "Orchestrating card listing");
 
     // Get the cards
-    const cards = cardsService.ListCards();
+    const cards = await cardsService.ListCards(userId);
 
-    // Populate response
-    const cardListResponse: CardListResponse = {
-      Items: cards.map(container => {
-        const cardListItem: CardListItem = {
-          Name: "",
-          Tagline: container.Tagline ?? "Tagline not set",
-          UserId: userId,
-          URL: "http://localhost/" + Math.random(),
-          Created: container.Created,
-          Updated: container.Updated,
-        }
-        if (container.IsV1()) {
-          return Object.assign(cardListItem, { 
-            Name: container.Card.name
-          });
-        } else if (container.IsV2() || container.IsV3()) {
-          return Object.assign(cardListItem, { 
-            Name: container.Card.data.name
-          });
-        }
-        throw new Error("Could not determine card version");
-      }),
-      Pagination: false
+    // Populate and return the response
+    return {
+      Items: cards.map(this.cardContainerToCardListItem),
+      Pagination: false // TODO: check where this should come from
     }
-
-    return cardListResponse;
   }
 
   /**
@@ -101,5 +86,31 @@ export class MyCardsOrchestrator implements
       }
     };
 
+  }
+
+  private cardContainerToCardListItem(cardContainer: CardContainer): CardListItem {
+    // Safe defaults for now
+    const cardListItem: CardListItem = Object.assign({
+      Name: "", // To be set later
+      Tagline: cardContainer.Tagline ?? "Tagline not set",
+      UserId: cardContainer.UserId,
+      URL: "http://localhost/" + Math.random(), // TODO: update me!
+      Created: cardContainer.Created,
+      Updated: cardContainer.Updated,
+    });
+
+    // V1 card handling
+    if (cardContainer.IsV1()) {
+      return Object.assign(cardListItem, {
+        Name: cardContainer.Card.name
+      });
+    // V2 and V2 card handling
+    } else if (cardContainer.IsV2() || cardContainer.IsV3()) {
+      return Object.assign(cardListItem, {
+        Name: cardContainer.Card.data.name
+      });
+    }
+
+    throw new Error("Could not determine card version");
   }
 }
