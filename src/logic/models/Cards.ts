@@ -1,3 +1,3 @@
-import { TavernCardV1, TavernCardV2, TavernCardV3 } from "../../Cards.js";
+import { TavernCardV2, TavernCardV3 } from "../../Cards.js";
 
-export type Card = TavernCardV1 | TavernCardV2 | TavernCardV3;
+export type Card = TavernCardV2 | TavernCardV3;

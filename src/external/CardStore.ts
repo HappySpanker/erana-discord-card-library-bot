@@ -1,7 +1,7 @@
-import { Temporal } from "@js-temporal/polyfill";
-import { AnyTavernCard, CardContainer, TavernCardV1 } from "../Cards.js";
+import { CardContainer } from "../Cards.js";
 import { logger } from "../logger.js";
 import { database_pool } from "./Database.js";
+import { CardDTO, CardDTOToCardContainer } from "./models/cardDTO.js";
 
 export interface IListByUserCardStore {
   ListByUser(userId: string): Promise<Array<CardContainer>>
@@ -9,16 +9,6 @@ export interface IListByUserCardStore {
 
 export interface IUploadByUserCardStore {
   UploadByUser(userId: string): Promise<boolean>
-}
-
-// TODO: This should go elsewhere
-export type CardDTO = {
-  id: number,
-  user_id: string,
-  tagline: string,
-  card_json: AnyTavernCard,
-  created: Temporal.Instant,
-  updated: Temporal.Instant
 }
 
 class CardStore implements
@@ -59,15 +49,7 @@ class CardStore implements
         [ userId ]
       );
 
-      return res.rows.map(dto =>
-        new CardContainer(
-          dto.card_json,
-          dto.user_id,
-          dto.created,
-          dto.updated,
-          dto.tagline
-        )
-      )
+      return res.rows.map(dto => CardDTOToCardContainer(dto));
     } catch (err) {
       logger.error({
         err,

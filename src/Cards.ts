@@ -4,21 +4,6 @@
 
 import { Temporal } from "@js-temporal/polyfill"
 import { CharacterBook } from "./Characterbooks.js"
-import { cardsService } from "./logic/CardService.js"
-
-/**
- * Ancient V1 card spec
- */
-export type TavernCardV1  = {
-  spec: "chara_card_v1", // Not part of the spec, QOL addition
-  spec_version: "1.0", // Not part of the spec, QOL addition
-  name: string
-  description: string
-  personality: string
-  scenario: string
-  first_mes: string
-  mes_example: string
-}
 
 /**
  * Ancient-but-still-common V2 card spec
@@ -81,7 +66,7 @@ export type TavernCardV3 = {
   }
 }
 
-export type AnyTavernCard = TavernCardV1 | TavernCardV2 | TavernCardV3;
+export type AnyTavernCard = TavernCardV2 | TavernCardV3;
 
 /**
  * This is where the fun begin!
@@ -98,10 +83,6 @@ export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
     // Enrichments
     public readonly Tagline?: string
   ) {}
-
-  public IsV1(): this is CardContainer<TavernCardV1> {
-    return this.Card.spec_version === "1.0";
-  }
 
   public IsV2(): this is CardContainer<TavernCardV2> {
     return this.Card.spec_version === "2.0";

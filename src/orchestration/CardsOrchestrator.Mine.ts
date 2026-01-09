@@ -90,27 +90,13 @@ export class MyCardsOrchestrator implements
 
   private cardContainerToCardListItem(cardContainer: CardContainer): CardListItem {
     // Safe defaults for now
-    const cardListItem: CardListItem = Object.assign({
-      Name: "", // To be set later
+    return {
+      Name: cardContainer.Card.data.name,
       Tagline: cardContainer.Tagline ?? "Tagline not set",
       UserId: cardContainer.UserId,
       URL: "http://localhost/" + Math.random(), // TODO: update me!
       Created: cardContainer.Created,
       Updated: cardContainer.Updated,
-    });
-
-    // V1 card handling
-    if (cardContainer.IsV1()) {
-      return Object.assign(cardListItem, {
-        Name: cardContainer.Card.name
-      });
-    // V2 and V2 card handling
-    } else if (cardContainer.IsV2() || cardContainer.IsV3()) {
-      return Object.assign(cardListItem, {
-        Name: cardContainer.Card.data.name
-      });
-    }
-
-    throw new Error("Could not determine card version");
+    };
   }
 }
