@@ -53,7 +53,14 @@ class MyCardsOrchestrator implements
    */
   async uploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
     logger.trace("MyCardsOrchestrator.uploadJson");
-    
+
+    cardsService.UploadCard(
+      cardUploadModel.UserId,
+      cardUploadModel.Visibility,
+      cardUploadModel.Tagline,
+      cardUploadModel.Json
+    );
+
     return await Promise.resolve({
       success: true,
       item: {

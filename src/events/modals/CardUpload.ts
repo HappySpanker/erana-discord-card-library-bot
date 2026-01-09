@@ -45,6 +45,7 @@ export class CardUpload implements IModalHandler {
 
         // Build a card upload request
         const cardUloadRequest: CardUploadRequest = {
+            UserId: interaction.user.id,
             Visibility: visibility,
             Tagline: tagline,
             Json: json

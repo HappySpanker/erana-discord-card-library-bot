@@ -1,16 +1,40 @@
-import { stringify } from "node:querystring";
 import { CardContainer, TavernCardV2 } from "../Cards.js";
 import { logger } from "../logger.js";
-import { Card } from "./models/Cards.js";
-import { Temporal } from "@js-temporal/polyfill";
 import { cardStore } from "../external/CardStore.js";
 
 export interface IListCardsService {
   ListCards(userId: string): Promise<Array<CardContainer>>;
 }
 
-class CardsService
-  implements IListCardsService {
+export interface IUploadCardService {
+  UploadCard(
+    userId: string,
+    visibility: string,
+    tagline: string,
+    json: string
+  ): Promise<void>;
+}
+
+class CardsService implements 
+  IListCardsService,
+  IUploadCardService {
+  async UploadCard(
+    userId: string,
+    visibility: string,
+    tagline: string,
+    json: string
+  ): Promise<void> {
+    logger.trace({
+      UserId: userId,
+      visibility: visibility,
+      Tagline: tagline.substring(0, 32),
+      Json: json.substring(0, 32)
+    },
+    "CardsService.UploadCard");
+
+    
+  }
+
   async ListCards(userId: string): Promise<Array<CardContainer>> {
     logger.trace({
 

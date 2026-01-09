@@ -75,8 +75,10 @@ export type AnyTavernCard = TavernCardV2 | TavernCardV3;
 export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
   constructor(
     // Main data
-    public  readonly Card: T,
-    // Trackinbg
+    public readonly Card: T,
+    public readonly Visibility: string,
+
+    // Tracking
     public readonly UserId: string,
     public readonly Created: Temporal.Instant,
     public readonly Updated: Temporal.Instant,
