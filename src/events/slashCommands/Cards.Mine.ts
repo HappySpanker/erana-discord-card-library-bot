@@ -1,9 +1,7 @@
-import { CacheType, ChatInputCommandInteraction, EmbedBuilder, LabelBuilder, MessageFlags, ModalBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, ComponentType, EmbedBuilder, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { CardUpload } from "../modals/CardUpload.js";
 import { logger } from "../../logger.js";
-import { MyCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
-
-const myCardsOrchestrator = new MyCardsOrchestrator();
+import { myCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
 
 /**
  * Handles calls for listing one's own cards
@@ -60,22 +58,54 @@ export async function CardsMineUpload(interaction: ChatInputCommandInteraction<C
     .setCustomId(CardUpload.customId)
     .setTitle("Card upload");
 
-  const cardNameExplanationText = new TextDisplayBuilder()
-    .setContent("Please be aware that the name above will impact how Erana outputs your cards. The name will be output at the resulting file name, which is used by clients as the default character name.");
+  // const cardNameExplanationText = new TextDisplayBuilder()
+  //   .setContent("Please be aware that the name above will impact how Erana outputs your cards. The name will be output at the resulting file name, which is used by clients as the default character name.");
 
-  const cardNameInput = new TextInputBuilder()
-    .setCustomId('name')
-    .setStyle(TextInputStyle.Short)
-    .setPlaceholder("Erana")
+  // Visibility
+  const setVisibilitySelector = new StringSelectMenuBuilder()
+    .setCustomId('visibility')
+    .addOptions(
+      new StringSelectMenuOptionBuilder()
+        .setLabel("Public")
+        .setValue("public")
+        .setDescription("This card will be marked as public")
+      )
+    .addOptions(
+      new StringSelectMenuOptionBuilder()
+        .setLabel("Private")
+        .setValue("private")
+        .setDefault(true)
+    )
     .setRequired(true);
 
-  const cardNameLabel = new LabelBuilder()
-    .setLabel("What's the name of your card?")
-    .setDescription("Will be used to output the resulting card JSON or PNG naming and thus by your preferred client.")
-    .setTextInputComponent(cardNameInput);
+  const setVisibilityLabel = new LabelBuilder()
+    .setLabel("What is the visibility of your card?")
+    .setDescription("Will be used to set the visibility of your card. This can always be changed later.")
+    .setStringSelectMenuComponent(setVisibilitySelector);
 
-  modal.addLabelComponents(cardNameLabel);
-  modal.addTextDisplayComponents(cardNameExplanationText);
+  // Card
+  const cardFileUpload = new FileUploadBuilder()
+    .setCustomId("card")
+    .setRequired(true);
+    
+  const cardFileUploadLabel = new LabelBuilder()
+    .setLabel("The JSON representing your card.")
+    .setFileUploadComponent(cardFileUpload);
+
+  // Tagline
+  const setTaglineTextInput = new TextInputBuilder()
+    .setCustomId("tagline")
+    .setStyle(TextInputStyle.Paragraph)
+    .setPlaceholder("Your amazing tag line that will sell your card!")
+    .setRequired(false);
+
+  const setTaglineLabel = new LabelBuilder()
+    .setLabel("What's your card's tagline?")
+    .setTextInputComponent(setTaglineTextInput);
+
+  modal.addLabelComponents(setVisibilityLabel);
+  modal.addLabelComponents(setTaglineLabel);
+  modal.addLabelComponents(cardFileUploadLabel);
 
   // Show modal to the user
   await interaction.showModal(modal);

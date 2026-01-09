@@ -1,18 +1,28 @@
-import { IUploadMyCardsOrchestrator } from "./CardsOrchestrator.js";
 import { logger } from "../logger.js";
 import { CardContainer, TavernCardV2 } from "../Cards.js";
 import { CardListResponse } from "./models/CardListResponse.js";
 import { Pagination } from "./models/Pagination.js";
 import { cardsService } from "../logic/CardService.js";
-import { CardListItem } from "./models/CardListItem.js";
+import { CardModel } from "./models/CardModel.js";
+import { CardUploadRequest } from "./models/CardUploadRequest.js";
+import { CardUploadResponse } from "./models/CardUploadResponse.js";
+import { Temporal } from "@js-temporal/polyfill";
 
-export interface IListCardsOrchestrator {
+export interface IListMyCardsOrchestrator {
   listCards(pagination: Pagination, myUserId: string): Promise<CardListResponse>;
 }
 
-export class MyCardsOrchestrator implements
+export interface IUploadMyCardsOrchestrator {
+    /**
+     * Upload JSON data
+     * @param json the raw JSON data a card
+     */
+    uploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse>;
+}
+
+class MyCardsOrchestrator implements
   IUploadMyCardsOrchestrator,
-  IListCardsOrchestrator {
+  IListMyCardsOrchestrator {
 
   /**
    * List cards for a user
@@ -41,54 +51,23 @@ export class MyCardsOrchestrator implements
   /**
    * Handle uploading JSON file
    */
-  async uploadJson(json: unknown): Promise<boolean> {
-    logger.debug({
-
-    }, "uploadJson");
-
-    const cardv2 = this.salvageCard(json);
-
-    return await Promise.resolve(true);
-  }
-
-  /**
-   * WIP; later concern
-   */
-  uploadCard(card: unknown): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-
-
-
-  /**
-   * This eventually has to go to the logic layer
-   */
-  private salvageCard(json: unknown): TavernCardV2 {
-
-    return {
-      spec: "chara_card_v2", // Placeholder value
-      spec_version: "2.0", // Placeholder value
-      data: {
-        name: "", // Placeholder value
-        description: "", // Placeholder value
-        personality: "", // Placeholder value
-        scenario: "", // Placeholder value
-        first_mes: "", // Placeholder value
-        mes_example: "", // Placeholder value
-        creator_notes: "", // Placeholder value
-        system_prompt: "", // Placeholder value
-        post_history_instructions: "", // Placeholder value
-        alternate_greetings: [], // Placeholder value
-        tags: [], // Placeholder value
-        creator: "", // Placeholder value
-        character_version: "", // Placeholder value
-        extensions: {} // Placeholder value
+  async uploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
+    logger.trace("MyCardsOrchestrator.uploadJson");
+    
+    return await Promise.resolve({
+      success: true,
+      item: {
+        Name: "???",
+        Tagline: cardUploadModel.Tagline,
+        URL: "xxx",
+        UserId: "yyy",
+        Created: Temporal.Now.instant(),
+        Updated: Temporal.Now.instant(),
       }
-    };
-
+    });
   }
 
-  private cardContainerToCardListItem(cardContainer: CardContainer): CardListItem {
+  private cardContainerToCardListItem(cardContainer: CardContainer): CardModel {
     // Safe defaults for now
     return {
       Name: cardContainer.Card.data.name,
@@ -100,3 +79,5 @@ export class MyCardsOrchestrator implements
     };
   }
 }
+
+export const myCardsOrchestrator = new MyCardsOrchestrator();
