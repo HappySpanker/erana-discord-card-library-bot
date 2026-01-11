@@ -1,4 +1,5 @@
 import z from "zod";
+import { TavernCardV2 } from "../../Cards.js";
 
 export const TavernCardV2Schema = z.object({
     spec: z.literal("chara_card_v2"),
@@ -25,3 +26,7 @@ export const TavernCardV2Schema = z.object({
         extensions: z.record(z.string(), z.any())
     })
 })
+
+export function IsTavernCardV2(source: unknown): source is TavernCardV2 {
+    return TavernCardV2Schema.safeParse(source).success;
+}

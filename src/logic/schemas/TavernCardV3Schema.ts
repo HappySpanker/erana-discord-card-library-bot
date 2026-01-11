@@ -1,5 +1,6 @@
 import z from "zod";
 import { TavernCardV2Schema } from "./TavernCardV2Schema.js";
+import { TavernCardV3 } from "../../Cards.js";
 
 export const TavernCardV3Schema = TavernCardV2Schema.extend({
   spec: z.literal('chara_card_v3'),
@@ -12,3 +13,7 @@ export const TavernCardV3Schema = TavernCardV2Schema.extend({
   first_mes: z.string(),
   mes_example: z.string(),
 })
+
+export function IsTavernCardV3(source: unknown): source is TavernCardV3 {
+  return TavernCardV3Schema.safeParse(source).success;
+}
