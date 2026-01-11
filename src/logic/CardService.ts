@@ -1,4 +1,4 @@
-import { CardContainer, TavernCardV2 } from "../Cards.js";
+import { CardContainer, TavernCardV2, TavernCardV3 } from "../Cards.js";
 import { logger } from "../logger.js";
 import { cardStore } from "../external/CardStore.js";
 
@@ -36,40 +36,28 @@ class CardsService implements
   }
 
   async ListCards(userId: string): Promise<Array<CardContainer>> {
-    logger.trace({
-
-    }, "Servicing card listing");
+    logger.trace("CardsService.ListCards");
 
     // TODO: try cache first
 
     // Direct access
-    return await cardStore.ListByUser(userId)
-  }
-}
+    const cardDTOs = await cardStore.ListByUser(userId);
 
-// TODO: Remove me!
-function dummyCardGenerator(): TavernCardV2 {
-  return {
-    spec: "chara_card_v2",
-    spec_version: "2.0",
-    data: {
-      alternate_greetings: [],
-      character_version: "dummy",
-      creator: "dummy",
-      creator_notes: "dummy",
-      description: "dummy",
-      extensions: {
-        ["dummy"]: undefined
+    logger.trace({
+        count: cardDTOs.length
       },
-      first_mes: "dummy",
-      mes_example: "dummy",
-      name: "dummy",
-      personality: "dummy",
-      post_history_instructions: "dummy",
-      scenario: "dummy",
-      system_prompt: "dummy",
-      tags: ["dummy"]
-    }
+      "Received cardDTO[] from cardStore");
+
+    return cardDTOs.map(dto => {
+      return new CardContainer(
+        dto.card as TavernCardV3,
+        dto.visibility,
+        dto.user_id,
+        dto.created,
+        dto.updated,
+        dto.tagline
+      )
+    });
   }
 }
 

@@ -1,10 +1,9 @@
-import { CardContainer } from "../Cards.js";
 import { logger } from "../logger.js";
 import { database_pool } from "./Database.js";
-import { CardDTO, CardDTOToCardContainer } from "./models/cardDTO.js";
+import { CardDTO } from "./models/cardDTO.js";
 
 export interface IListByUserCardStore {
-  ListByUser(userId: string): Promise<Array<CardContainer>>
+  ListByUser(userId: string): Promise<Array<CardDTO>>
 }
 
 export interface IUploadByUserCardStore {
@@ -26,11 +25,11 @@ class CardStore implements
    * @param userId The canonical user ID to list
    * @returns The cards belonging to that user
    */
-  async ListByUser(userId: string): Promise<CardContainer[]> {
+  async ListByUser(userId: string): Promise<CardDTO[]> {
     logger.trace({
         userId
       },
-      "External card listing")
+      "CardStore.ListByUser")
     try {
       const res = await this._pool.query<CardDTO>(
         `
@@ -38,7 +37,7 @@ class CardStore implements
           cards.id,
           cards.user_id::text AS user_id,
           cards.tagline,
-          cards.card_json,
+          cards.card_json as card,
           cards.created,
           cards.updated
         FROM public.cards
@@ -49,7 +48,7 @@ class CardStore implements
         [ userId ]
       );
 
-      return res.rows.map(dto => CardDTOToCardContainer(dto));
+      return res.rows;
     } catch (err) {
       logger.error({
         err,
