@@ -45,6 +45,8 @@ class CardsService implements
     } else {
       throw new Error("Inbound JSON is not a TavernCardV2 nor ST TavernCardV3");
     }
+
+    
   }
 
   async ListCards(userId: string): Promise<Array<CardContainer>> {
