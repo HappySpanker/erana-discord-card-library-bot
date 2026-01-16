@@ -1,4 +1,4 @@
-import { EranaClient } from "./events/EranaClient.js";
+import { CreateEranaClient } from "./Composition.js";
 
 let isShuttingDown = false;
 
@@ -59,4 +59,4 @@ process.on("rejectionHandled", () => {
   console.warn("Late promise handler attached");
 });
 
-const client =  new EranaClient();
+const client = CreateEranaClient();
