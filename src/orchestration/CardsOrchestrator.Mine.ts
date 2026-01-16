@@ -7,39 +7,30 @@ import { CardModel } from "./models/CardModel.js";
 import { CardUploadRequest } from "./models/CardUploadRequest.js";
 import { CardUploadResponse } from "./models/CardUploadResponse.js";
 import { Temporal } from "@js-temporal/polyfill";
+import { CreateUserService } from "../logic/UserService.js";
 
-export interface IListMyCardsOrchestrator {
-  listCards(pagination: Pagination, myUserId: string): Promise<CardListResponse>;
+export interface IMyCardsOrchestrator {
+  ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
+  UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse>;
 }
 
-export interface IUploadMyCardsOrchestrator {
-    /**
-     * Upload JSON data
-     * @param json the raw JSON data a card
-     */
-    uploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse>;
-}
-
-class MyCardsOrchestrator implements
-  IUploadMyCardsOrchestrator,
-  IListMyCardsOrchestrator {
-
+class MyCardsOrchestrator implements IMyCardsOrchestrator {
   /**
    * List cards for a user
    * @param pagination Should we use pagination and if so, where are we?
-   * @param userId List the cards for which user?
+   * @param canonicalUserId List the cards for which user?
    * @returns A list of cards for the requested user
    */
-  async listCards(
+  async ListCards(
     pagination: Pagination,
-    userId: string): Promise<CardListResponse> {
+    canonicalUserId: string): Promise<CardListResponse> {
     logger.trace({
       pagination: pagination,
-      userId: userId,
-    }, "Orchestrating card listing");
+      userId: canonicalUserId,
+    }, "MyCardsOrchestrator.ListCards");
 
     // Get the cards
-    const cards = await cardsService.ListCards(userId);
+    const cards = await cardsService.ListCards(canonicalUserId);
 
     // Populate and return the response
     return {
@@ -51,7 +42,7 @@ class MyCardsOrchestrator implements
   /**
    * Handle uploading JSON file
    */
-  async uploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
+  async UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
     logger.trace("MyCardsOrchestrator.uploadJson");
 
     cardsService.UploadCard(
@@ -87,4 +78,6 @@ class MyCardsOrchestrator implements
   }
 }
 
-export const myCardsOrchestrator = new MyCardsOrchestrator();
+export function CreateMyCardOrchestrator(): IMyCardsOrchestrator {
+  return new MyCardsOrchestrator()
+}

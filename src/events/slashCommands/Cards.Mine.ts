@@ -1,7 +1,9 @@
 import { CacheType, ChatInputCommandInteraction, ComponentType, EmbedBuilder, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { CardUpload } from "../modals/CardUpload.js";
 import { logger } from "../../logger.js";
-import { myCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
+import { CreateMyCardOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
+
+const myCardsOrchestrator = CreateMyCardOrchestrator();
 
 /**
  * Handles calls for listing one's own cards
@@ -16,7 +18,7 @@ export async function CardsMineList(interaction: ChatInputCommandInteraction<Cac
   }, "Handling Cards:Mine:List");
 
   // Prepare intial call to orchestrator
-  const cardsListResponse = await myCardsOrchestrator.listCards(
+  const cardsListResponse = await myCardsOrchestrator.ListCards(
     false,
     interaction.user.id
   );
