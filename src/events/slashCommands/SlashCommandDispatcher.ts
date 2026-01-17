@@ -1,18 +1,21 @@
-import { ChatInputCommandInteraction, CacheType, MessageFlags, EmbedBuilder, MessagePayload, InteractionEditReplyOptions } from "discord.js";
+import { ChatInputCommandInteraction, CacheType, MessageFlags } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
 import { StatusSlashCommandHandler } from "./Status.js";
 import { slashCommandInteractionLogger } from "../../logger.js";
 import { CardsSlashCommandsHandler } from "./Cards.js";
-import { GenericErrorEmbed, GenericExceptionEmbed } from "../utils/Embeds.js";
-import { title } from "node:process";
+import { GenericErrorEmbed } from "../utils/Embeds.js";
 
-export class SlashCommandDispatcher {
+export interface ISlashCommandDispatcher {
+    Dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
+}
+
+class SlashCommandDispatcher {
     private _handlerMapping = new Map<string, ISlashCommandHandler>([
         ["status", new StatusSlashCommandHandler()],
         ["cards", new CardsSlashCommandsHandler()],
     ]);
 
-    async dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+    async Dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         const logger = slashCommandInteractionLogger(interaction);
 
         logger.debug(
@@ -48,4 +51,8 @@ export class SlashCommandDispatcher {
             // TODO: error handling
         }
     }
+}
+
+export function CreateSlashCommandDispatcher(): ISlashCommandDispatcher {
+    return new SlashCommandDispatcher();
 }

@@ -1,17 +1,17 @@
-import { Client, Events, GatewayIntentBits, Interaction, MessageFlags } from "discord.js";
-import { SlashCommandDispatcher } from "./slashCommands/SlashCommandDispatcher.js";
-import { ISlashCommandHandler } from "./slashCommands/interfaces/ICommandHandler.js";
+import { Client, Events, GatewayIntentBits, Interaction } from "discord.js";
 import { logger } from "../logger.js";
 import { ModalDispatcher } from "./modals/ModalDispatcher.js";
+import { ISlashCommandDispatcher } from "./slashCommands/SlashCommandDispatcher.js";
 
 export class EranaClient extends Client<boolean> {
     private _modalSubmitDispatcher = new ModalDispatcher();
-    private _slashCommandDispatcher = new SlashCommandDispatcher();
 
     /**
      * Create a new EranaClient which inherits/extends from the base discord.js client
      */
-    constructor() {
+    constructor(
+        private readonly _slashCommandDispatcher: ISlashCommandDispatcher
+    ) {
         super({
             intents: [
                 GatewayIntentBits.Guilds,
@@ -54,7 +54,7 @@ export class EranaClient extends Client<boolean> {
             Events.InteractionCreate, 
             async (interaction: Interaction) => {
                 if (interaction.isChatInputCommand()) {                
-                    await this._slashCommandDispatcher.dispatch(interaction);
+                    await this._slashCommandDispatcher.Dispatch(interaction);
                     return;
                 }
             }
