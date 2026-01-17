@@ -1,19 +1,17 @@
 import { ChatInputCommandInteraction, CacheType, MessageFlags } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
-import { StatusSlashCommandHandler } from "./Status.js";
 import { slashCommandInteractionLogger } from "../../logger.js";
-import { CardsSlashCommandsHandler } from "./Cards.js";
 import { GenericErrorEmbed } from "../utils/Embeds.js";
 
 export interface ISlashCommandDispatcher {
     Dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
+    RegisterHandler(key: string, handler: ISlashCommandHandler): void;
 }
 
 class SlashCommandDispatcher {
-    private _handlerMapping = new Map<string, ISlashCommandHandler>([
-        ["status", new StatusSlashCommandHandler()],
-        ["cards", new CardsSlashCommandsHandler()],
-    ]);
+    constructor(
+        private _handlerMapping = new Map<string, ISlashCommandHandler>()
+    ){ }
 
     async Dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         const logger = slashCommandInteractionLogger(interaction);
@@ -50,6 +48,10 @@ class SlashCommandDispatcher {
 
             // TODO: error handling
         }
+    }
+
+    RegisterHandler(key: string, handler: ISlashCommandHandler) {
+        this._handlerMapping.set(key, handler);
     }
 }
 
