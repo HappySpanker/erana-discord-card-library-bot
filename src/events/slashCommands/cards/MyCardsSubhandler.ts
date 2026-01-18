@@ -8,7 +8,7 @@ export interface IMyCardsSubhandler {
   Upload(interaction: ChatInputCommandInteraction): Promise<void>;
 }
 
-class MyCards implements IMyCardsSubhandler {
+class MyCardSubhandler implements IMyCardsSubhandler {
   constructor(
     private readonly _myCardsOrchestrator: IMyCardsOrchestrator
   ) { }
@@ -119,5 +119,5 @@ class MyCards implements IMyCardsSubhandler {
 }
 
 export function CreateMyCardsSubhandler(myCardsOrchestrator: IMyCardsOrchestrator): IMyCardsSubhandler {
-  return new MyCards(myCardsOrchestrator);
+  return new MyCardSubhandler(myCardsOrchestrator);
 }
