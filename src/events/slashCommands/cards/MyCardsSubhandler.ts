@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { CardUpload } from "../modals/CardUpload.js";
-import { logger } from "../../logger.js";
-import { CreateMyCardOrchestrator, IMyCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
+import { CardUpload } from "../../modals/CardUpload.js";
+import { logger } from "../../../logger.js";
+import { IMyCardsOrchestrator } from "../../../orchestration/CardsOrchestrator.Mine.js";
 
 export interface IMyCardsSubhandler {
   List(interaction: ChatInputCommandInteraction): Promise<void>;

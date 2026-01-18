@@ -1,6 +1,6 @@
 import { CacheType, ChatInputCommandInteraction, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, SlashCommandBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
-import { IMyCardsSubhandler } from "./MyCardsSubhandler.js";
+import { IMyCardsSubhandler } from "./cards/MyCardsSubhandler.js";
 
 export const CardsSlashCommandBuilder = new SlashCommandBuilder()
   .setName("cards")

@@ -1,6 +1,6 @@
 import { EranaClient } from "./events/EranaClient.js";
 import { CardsSlashCommandsHandler } from "./events/slashCommands/Cards.js";
-import { CreateMyCardsSubhandler } from "./events/slashCommands/MyCardsSubhandler.js";
+import { CreateMyCardsSubhandler } from "./events/slashCommands/cards/MyCardsSubhandler.js";
 import { CreateSlashCommandDispatcher } from "./events/slashCommands/SlashCommandDispatcher.js";
 import { StatusSlashCommandHandler } from "./events/slashCommands/Status.js";
 import { CreateMyCardOrchestrator } from "./orchestration/CardsOrchestrator.Mine.js";
