@@ -1,8 +1,6 @@
 import { CacheType, ChatInputCommandInteraction, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, SlashCommandBuilder, TextDisplayBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
-import { CardUpload } from "../modals/CardUpload.js";
-import { logger } from "../../logger.js";
-import { CardsMineList, CardsMineUpload } from "./Cards.Mine.js";
+import { IMyCardsSubhandler } from "./MyCardsSubhandler.js";
 
 export const CardsSlashCommandBuilder = new SlashCommandBuilder()
   .setName("cards")
@@ -54,6 +52,10 @@ export const CardsSlashCommandBuilder = new SlashCommandBuilder()
   )
 
 export class CardsSlashCommandsHandler implements ISlashCommandHandler {
+  constructor(
+    private readonly _myCards: IMyCardsSubhandler
+  ) { }
+
   public async handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
     const commandPath = (interaction.options.getSubcommandGroup() 
       + ":" 
@@ -61,8 +63,8 @@ export class CardsSlashCommandsHandler implements ISlashCommandHandler {
         .toLowerCase();
 
     switch (commandPath) {
-      case "mine:list": return await CardsMineList(interaction);
-      case "mine:upload": return await CardsMineUpload(interaction);
+      case "mine:list": return await this._myCards.List(interaction);
+      case "mine:upload": return await this._myCards.Upload(interaction);
       default: throw new Error("No matching subcommands found");
     }
   }
