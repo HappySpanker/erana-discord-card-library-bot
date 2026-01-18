@@ -1,13 +1,12 @@
 import { logger } from "../logger.js";
-import { CardContainer, TavernCardV2 } from "../Cards.js";
+import { CardContainer } from "../Cards.js";
 import { CardListResponse } from "./models/CardListResponse.js";
 import { Pagination } from "./models/Pagination.js";
-import { cardsService } from "../logic/CardService.js";
+import { ICardService } from "../logic/CardService.js";
 import { CardModel } from "./models/CardModel.js";
 import { CardUploadRequest } from "./models/CardUploadRequest.js";
 import { CardUploadResponse } from "./models/CardUploadResponse.js";
 import { Temporal } from "@js-temporal/polyfill";
-import { CreateUserService } from "../logic/UserService.js";
 
 export interface IMyCardsOrchestrator {
   ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
@@ -15,6 +14,11 @@ export interface IMyCardsOrchestrator {
 }
 
 class MyCardsOrchestrator implements IMyCardsOrchestrator {
+
+  constructor(
+    private readonly _cardService: ICardService
+  ){ }
+
   /**
    * List cards for a user
    * @param pagination Should we use pagination and if so, where are we?
@@ -30,7 +34,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
     }, "MyCardsOrchestrator.ListCards");
 
     // Get the cards
-    const cards = await cardsService.ListCards(canonicalUserId);
+    const cards = await this._cardService.ListCards(canonicalUserId);
 
     // Populate and return the response
     return {
@@ -45,7 +49,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
   async UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
     logger.trace("MyCardsOrchestrator.uploadJson");
 
-    cardsService.UploadCard(
+    this._cardService.UploadCard(
       cardUploadModel.UserId,
       cardUploadModel.Visibility,
       cardUploadModel.Tagline,
@@ -78,6 +82,6 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
   }
 }
 
-export function CreateMyCardOrchestrator(): IMyCardsOrchestrator {
-  return new MyCardsOrchestrator()
+export function CreateMyCardOrchestrator(cardService: ICardService): IMyCardsOrchestrator {
+  return new MyCardsOrchestrator(cardService);
 }

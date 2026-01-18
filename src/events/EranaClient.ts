@@ -69,7 +69,7 @@ export class EranaClient extends Client<boolean> {
             Events.InteractionCreate,
             async (interaction: Interaction) => {
                 if (interaction.isModalSubmit()) {
-                    await this._modalSubmitDispatcher.dispatch(interaction);
+                    await this._modalSubmitDispatcher.Dispatch(interaction);
                     return;
                 }
             }

@@ -1,18 +1,15 @@
 import { ModalSubmitInteraction } from "discord.js";
 import { logger } from "../../logger.js";
-import { CardUpload } from "./CardUpload.js";
 import { safeErrorReply } from "../utils/Errors.js";
 
 export interface IModalHandler {
-    handle(interaction: ModalSubmitInteraction): Promise<void>
+    Handle(interaction: ModalSubmitInteraction): Promise<void>
 }
 
 export class ModalDispatcher {
-    private readonly _handerMapping = new Map<string, IModalHandler>([
-        [CardUpload.customId, new CardUpload()]
-    ])
+    private readonly _handerMapping = new Map<string, IModalHandler>();
 
-    async dispatch(interaction: ModalSubmitInteraction): Promise<void> {
+    async Dispatch(interaction: ModalSubmitInteraction): Promise<void> {
         const handler = this._handerMapping.get(interaction.customId);
 
         // Sanity check
@@ -30,7 +27,7 @@ export class ModalDispatcher {
 
         // Do something
         try {
-            await handler.handle(interaction);
+            await handler.Handle(interaction);
         } catch (err) {
             // Log
             logger.error({
@@ -41,4 +38,12 @@ export class ModalDispatcher {
             safeErrorReply(interaction, err);
         }
     }
+
+    RegisterHandler(key: string, handler: IModalHandler) {
+        this._handerMapping.set(key, handler);
+    }
+}
+
+export function CreateModalDisparcher() {
+    return new ModalDispatcher();
 }

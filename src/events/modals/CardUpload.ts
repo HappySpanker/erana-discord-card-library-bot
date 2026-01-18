@@ -2,14 +2,16 @@ import { MessageFlags, ModalSubmitInteraction } from "discord.js";
 import { IModalHandler } from "./ModalDispatcher.js";
 import { EphemeralReply } from "../utils/InteractionHelpers.js";
 import { CardUploadRequest } from "../../orchestration/models/CardUploadRequest.js";
-import { CreateMyCardOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
+import { CreateMyCardOrchestrator, IMyCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
 
 export class CardUpload implements IModalHandler {
   static customId = "CardUpload"
 
-  private _myCardOrchestrator = CreateMyCardOrchestrator();
+  constructor(
+    private readonly _myCardOrchestrator: IMyCardsOrchestrator
+  ) { }
 
-  async handle(interaction: ModalSubmitInteraction): Promise<void> {
+  async Handle(interaction: ModalSubmitInteraction): Promise<void> {
     const visibilityValues = interaction.fields.getStringSelectValues("visibility");
     const tagline = interaction.fields.getTextInputValue("tagline");
     const card = interaction.fields.getUploadedFiles("card");
