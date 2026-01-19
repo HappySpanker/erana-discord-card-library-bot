@@ -9,6 +9,7 @@ import { CreateCardStore } from "./external/CardStore.js";
 import { database_pool } from "./external/Database.js";
 import { CreateCardService } from "./logic/CardService.js";
 import { CreateMyCardOrchestrator } from "./orchestration/CardsOrchestrator.Mine.js";
+import { CreateStatusOrchestrator } from "./orchestration/StatusOrchestration.js";
 
 export function CreateEranaClient(): EranaClient {
     // External
@@ -19,10 +20,10 @@ export function CreateEranaClient(): EranaClient {
 
     // Orchestrators
     const myCardsOrchestrator = CreateMyCardOrchestrator(cardService);
-    
-    const myCardsSubhandler = CreateMyCardsSubhandler(myCardsOrchestrator);
+    const statusOrchestrator = CreateStatusOrchestrator();
     
     // Events: slash commands
+    const myCardsSubhandler = CreateMyCardsSubhandler(myCardsOrchestrator);
     const cardsSlashCommandHandler = new CardsSlashCommandsHandler(myCardsSubhandler);
     const statusSlashCommandHandler = new StatusSlashCommandHandler();
 

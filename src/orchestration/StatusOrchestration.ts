@@ -34,3 +34,7 @@ export class StatusOrchestration
         })
     }
 }
+
+export function CreateStatusOrchestrator(): IOrchestration<void, StatusValue> {
+    return new StatusOrchestration();
+}
