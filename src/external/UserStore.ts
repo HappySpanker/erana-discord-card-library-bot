@@ -32,8 +32,6 @@ WHERE u.canonical_user_id = $1`,
 
       const result = response.rows[0];
 
-      console.error(response, result, result?.canonical_user_id, result?.user_id);
-
       if (!result) {
         throw new Error("CanonicalUserId not found");
       }

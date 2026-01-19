@@ -1,4 +1,5 @@
 import { Temporal } from "@js-temporal/polyfill"
+import { TavernCardV2 } from "../../Cards.js"
 
 /**
  * These field names MUST match the field names in the source query.
@@ -9,7 +10,7 @@ export type CardDTO = {
   visibility: string,
   user_id: string,
   tagline: string,
-  card: unknown,
+  card: TavernCardV2,
   created: Temporal.Instant,
   updated: Temporal.Instant
 }

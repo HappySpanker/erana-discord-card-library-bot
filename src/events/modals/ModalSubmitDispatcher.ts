@@ -16,8 +16,6 @@ export class ModalSubmitDispatcher implements IModalSubmitDispatcher {
     async Dispatch(interaction: ModalSubmitInteraction): Promise<void> {
         const handler = this._handerMapping.get(interaction.customId);
 
-        console.error(this._handerMapping);
-
         // Sanity check
         if (!handler) {
             const msg = `Received request for '${interaction.customId}' modal handler, but not found`;
@@ -46,7 +44,6 @@ export class ModalSubmitDispatcher implements IModalSubmitDispatcher {
     }
 
     RegisterHandler(key: string, handler: IModalHandler) {
-        console.error(key, handler);
         this._handerMapping.set(key, handler);
     }
 }

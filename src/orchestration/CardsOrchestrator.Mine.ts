@@ -49,28 +49,37 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
    * Handle uploading JSON file
    */
   async UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
-    logger.trace("MyCardsOrchestrator.uploadJson");
+    logger.trace({
+      canonicalUserId: cardUploadModel.CanonicalUserId,
+      tagline: cardUploadModel.Tagline,
+      visibility: cardUploadModel.Visibility,
+      json: cardUploadModel.Json.substring(0, 64),
+    }, "MyCardsOrchestrator.uploadJson");
 
     const user = await this._userService.GetUserModelByCanonicalUserId(cardUploadModel.CanonicalUserId);
 
-    this._cardService.UploadCard({
+    const cardContainer = await this._cardService.UploadCard({
       userId: user.user_id,
       visibility: cardUploadModel.Visibility,
       tagline: cardUploadModel.Tagline,
       json: cardUploadModel.Json
     });
 
-    return await Promise.resolve({
+    logger.trace({
+      card: cardContainer.Card
+    })
+
+    return {
       success: true,
       item: {
-        Name: "???",
-        Tagline: cardUploadModel.Tagline,
-        URL: "xxx",
-        UserId: "yyy",
-        Created: Temporal.Now.instant(),
-        Updated: Temporal.Now.instant(),
+        Name: "MISSING",
+        Created: cardContainer.Created,
+        Updated: cardContainer.Updated,
+        Tagline: cardContainer.Tagline,
+        URL: `http://localhost/${Math.floor(Math.random()*1000)}`,
+        CanonicalUserId: user.canonical_user_id
       }
-    });
+    }
   }
 
   private cardContainerToCardListItem(cardContainer: CardContainer): CardModel {
@@ -78,7 +87,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
     return {
       Name: cardContainer.Card.data.name,
       Tagline: cardContainer.Tagline ?? "Tagline not set",
-      UserId: cardContainer.UserId,
+      CanonicalUserId: cardContainer.UserId,
       URL: "http://localhost/" + Math.random(), // TODO: update me!
       Created: cardContainer.Created,
       Updated: cardContainer.Updated,

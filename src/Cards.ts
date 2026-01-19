@@ -83,7 +83,7 @@ export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
     public readonly Created: Temporal.Instant,
     public readonly Updated: Temporal.Instant,
     // Enrichments
-    public readonly Tagline?: string
+    public readonly Tagline: string
   ) {}
 
   public IsV2(): this is CardContainer<TavernCardV2> {

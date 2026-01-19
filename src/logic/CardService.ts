@@ -6,7 +6,7 @@ import { ICardStore, UploadCardRequest as externalUploadCardRequest } from "../e
 
 export interface ICardService {
   ListCards(userId: string): Promise<Array<CardContainer>>;
-  UploadCard(request: UploadCardRequest): Promise<void>;
+  UploadCard(request: UploadCardRequest): Promise<CardContainer>;
 }
 
 export type UploadCardRequest = {
@@ -21,7 +21,7 @@ class CardsService implements ICardService {
     private readonly _cardStore: ICardStore
   ) { }
 
-  async UploadCard(request: UploadCardRequest): Promise<void> {
+  async UploadCard(request: UploadCardRequest): Promise<CardContainer> {
     logger.trace({
       userId: request.userId,
       visibility: request.visibility,
@@ -46,12 +46,21 @@ class CardsService implements ICardService {
 
     // Upload
     try {
-      this._cardStore.UploadCard({
+      const result = await this._cardStore.UploadCard({
         userId: request.userId,
-        json: request.json,
+        card: card,
         tagline: request.tagline,
         visibility: this.translateVisbilityStringToNumber(request.visibility)
       });
+
+      return new CardContainer(
+        result.card,
+        result.visibility,
+        result.user_id,
+        result.created,
+        result.updated,
+        result.tagline
+      )
     } catch(err) {
       logger.error(err);
       throw err;
@@ -73,7 +82,7 @@ class CardsService implements ICardService {
 
     return cardDTOs.map(dto => {
       return new CardContainer(
-        dto.card as TavernCardV3,
+        dto.card,
         dto.visibility,
         dto.user_id,
         dto.created,
