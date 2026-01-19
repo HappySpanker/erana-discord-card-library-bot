@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, FileUploadBuilder, LabelBuil
 import { CardUpload } from "../../modals/CardUpload.js";
 import { logger } from "../../../logger.js";
 import { IMyCardsOrchestrator } from "../../../orchestration/CardsOrchestrator.Mine.js";
+import { isDev } from "../../../Environment.js";
 
 export interface IMyCardsSubhandler {
   List(interaction: ChatInputCommandInteraction): Promise<void>;
@@ -74,12 +75,25 @@ class MyCardSubhandler implements IMyCardsSubhandler {
         new StringSelectMenuOptionBuilder()
           .setLabel("Public")
           .setValue("public")
-          .setDescription("This card will be marked as public")
+          .setDescription("This card will be marked as public; it can be searched by anyone in any context")
+      )
+      .addOptions(
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Shared")
+          .setValue("shared")
+          .setDescription("This card will be marked as shared; it can be searched by your user id and in your servers/guilds")
+      )
+      .addOptions(
+        new StringSelectMenuOptionBuilder()
+          .setLabel("Listed")
+          .setValue("listed")
+          .setDescription("This card will be marked as listed; it can be searched by your user id")
       )
       .addOptions(
         new StringSelectMenuOptionBuilder()
           .setLabel("Private")
           .setValue("private")
+          .setDescription("This card will be marked as private; only you can access it")
           .setDefault(true)
       )
       .setRequired(true);
@@ -103,8 +117,13 @@ class MyCardSubhandler implements IMyCardsSubhandler {
       .setCustomId("tagline")
       .setStyle(TextInputStyle.Paragraph)
       .setPlaceholder("Your amazing tag line that will sell your card!")
-      .setValue("hello, world!")
       .setRequired(false);
+    
+    // Dev QoL
+    if (isDev) {
+      setTaglineTextInput
+        .setValue("[DEV] Hello, world!");
+    }
 
     const setTaglineLabel = new LabelBuilder()
       .setLabel("What's your card's tagline?")
