@@ -1,20 +1,18 @@
+import { Pool } from "pg";
 import { logger } from "../logger.js";
 import { database_pool } from "./Database.js";
 import { CardDTO } from "./models/cardDTO.js";
 
-export interface IListByUserCardStore {
+export interface ICardStore {
   ListByUser(userId: string): Promise<Array<CardDTO>>
-}
-
-export interface IUploadByUserCardStore {
   UploadByUser(userId: string): Promise<boolean>
 }
 
-class CardStore implements
-  IListByUserCardStore,
-  IUploadByUserCardStore {
+class CardStore implements ICardStore {
 
-  private _pool = database_pool;
+  constructor(
+    private readonly _pool: Pool
+  ) { }
   
   UploadByUser(userId: string): Promise<boolean> {
     throw new Error("Method not implemented.");
@@ -62,4 +60,6 @@ class CardStore implements
   }
 }
 
-export const cardStore = new CardStore();
+export function CreateCardStore(pool: Pool): ICardStore {
+  return new CardStore(pool);
+}

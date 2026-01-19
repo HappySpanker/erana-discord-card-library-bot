@@ -1,8 +1,8 @@
 import { CardContainer, TavernCardV2, TavernCardV3 } from "../Cards.js";
 import { logger } from "../logger.js";
-import { cardStore } from "../external/CardStore.js";
 import { IsTavernCardV3 } from "./schemas/TavernCardV3Schema.js";
 import { IsTavernCardV2 } from "./schemas/TavernCardV2Schema.js";
+import { ICardStore } from "../external/CardStore.js";
 
 export interface ICardService {
   ListCards(userId: string): Promise<Array<CardContainer>>;
@@ -15,6 +15,10 @@ export interface ICardService {
 }
 
 class CardsService implements ICardService {
+  constructor(
+    private readonly _cardStore: ICardStore
+  ) { }
+
   async UploadCard(
     userId: string,
     visibility: string,
@@ -50,7 +54,7 @@ class CardsService implements ICardService {
     // TODO: try cache first
 
     // Direct access
-    const cardDTOs = await cardStore.ListByUser(userId);
+    const cardDTOs = await this._cardStore.ListByUser(userId);
 
     logger.trace({
         count: cardDTOs.length
@@ -84,6 +88,6 @@ class CardsService implements ICardService {
   }
 }
 
-export function CreateCardService(): ICardService {
-  return new CardsService();
+export function CreateCardService(cardStore: ICardStore): ICardService {
+  return new CardsService(cardStore);
 }
