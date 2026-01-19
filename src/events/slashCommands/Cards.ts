@@ -58,7 +58,7 @@ export class CardsSlashCommandsHandler implements ISlashCommandHandler {
     private readonly _myCards: IMyCardsSubhandler
   ) { }
 
-  public async handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+  public async Handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
     const commandPath = (interaction.options.getSubcommandGroup() 
       + ":" 
       + interaction.options.getSubcommand())

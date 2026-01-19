@@ -20,7 +20,7 @@ class StatusOrchestration
     private readonly _systemService: ISystemService
   ) { }
 
-  async orchestrate(payload: void): Promise<StatusValue> {
+  async Orchestrate(payload: void): Promise<StatusValue> {
 
     return await Promise.resolve({
       Erana: {

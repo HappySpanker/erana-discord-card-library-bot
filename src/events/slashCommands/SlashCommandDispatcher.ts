@@ -38,7 +38,7 @@ class SlashCommandDispatcher {
 
         // Try to call the dispatch handler
         try {
-            await handler.handle(interaction);
+            await handler.Handle(interaction);
         } catch(err) {
             // Log
             logger.error({

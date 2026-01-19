@@ -1,4 +1,4 @@
 export interface IOrchestration<TPayload, TResult> {
     
-    orchestrate(payload: TPayload): Promise<TResult>
+    Orchestrate(payload: TPayload): Promise<TResult>
 }

@@ -18,13 +18,13 @@ export class StatusSlashCommandHandler implements ISlashCommandHandler {
     private readonly _statusOrchestrator: IOrchestration<void, StatusValue>
   ) { }
 
-  public async handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+  public async Handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
     await interaction.deferReply({
       flags: MessageFlags.Ephemeral
     });
 
     const statusValue = await this._statusOrchestrator
-      .orchestrate();
+      .Orchestrate();
 
     await interaction.editReply({
       embeds: [this.statusEmbedBuilder(statusValue)],
