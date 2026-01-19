@@ -65,14 +65,10 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
       json: cardUploadModel.Json
     });
 
-    logger.trace({
-      card: cardContainer.Card
-    })
-
     return {
       success: true,
       item: {
-        Name: "MISSING",
+        Name: cardContainer.Card.data.name,
         Created: cardContainer.Created,
         Updated: cardContainer.Updated,
         Tagline: cardContainer.Tagline,

@@ -6,7 +6,7 @@ import { ICardStore, UploadCardRequest as externalUploadCardRequest } from "../e
 
 export interface ICardService {
   ListCards(userId: string): Promise<Array<CardContainer>>;
-  UploadCard(request: UploadCardRequest): Promise<CardContainer>;
+  UploadCard(request: UploadCardRequest): Promise<CardContainer<TavernCardV2>>;
 }
 
 export type UploadCardRequest = {
@@ -21,7 +21,7 @@ class CardsService implements ICardService {
     private readonly _cardStore: ICardStore
   ) { }
 
-  async UploadCard(request: UploadCardRequest): Promise<CardContainer> {
+  async UploadCard(request: UploadCardRequest): Promise<CardContainer<TavernCardV2>> {
     logger.trace({
       userId: request.userId,
       visibility: request.visibility,

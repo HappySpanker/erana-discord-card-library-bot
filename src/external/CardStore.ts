@@ -34,7 +34,7 @@ class CardStore implements ICardStore {
     // Try to upload card
     try {
       const result = await this._pool.query<CardDTO>(`INSERT INTO public.cards(
-	user_id, card_json, tagline, visibility)
+	user_id, card, tagline, visibility)
 	VALUES ($1, $2, $3, $4) RETURNING *;`,
         [
           request.userId,
@@ -75,7 +75,7 @@ class CardStore implements ICardStore {
           cards.id,
           cards.user_id::text AS user_id,
           cards.tagline,
-          cards.card_json as card,
+          cards.card,
           cards.created,
           cards.updated
         FROM public.cards
