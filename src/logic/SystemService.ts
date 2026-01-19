@@ -8,7 +8,7 @@ export interface ISystemService {
     get hostname(): string;
 }
 
-export class SystemService
+class SystemService
     implements ISystemService {
 
     private readonly _systemStore: ISystemStore = new SystemStore();
@@ -24,4 +24,8 @@ export class SystemService
                 maxDecimalPoints: 0
             });
     }
+}
+
+export function CreateSystemService(): ISystemService {
+    return new SystemService();
 }

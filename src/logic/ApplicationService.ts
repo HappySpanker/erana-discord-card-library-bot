@@ -6,7 +6,7 @@ export interface IApplicationService {
     get uptime(): string
 }
 
-export class ApplicationService
+class ApplicationService
     implements IApplicationService {
 
     private readonly _applicationStore: IApplicationStore
@@ -19,4 +19,8 @@ export class ApplicationService
                 maxDecimalPoints: 0
             });
     }
+}
+
+export function CreateApplicationService(): IApplicationService {
+    return new ApplicationService();
 }
