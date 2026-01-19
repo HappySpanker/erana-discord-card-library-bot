@@ -61,7 +61,7 @@ class MyCardSubhandler implements IMyCardsSubhandler {
     logger.trace("Handling Cards:Mine:Upload");
 
     const modal = new ModalBuilder()
-      .setCustomId(CardUpload.customId)
+      .setCustomId(CardUpload.Identifier)
       .setTitle("Card upload");
 
     // const cardNameExplanationText = new TextDisplayBuilder()

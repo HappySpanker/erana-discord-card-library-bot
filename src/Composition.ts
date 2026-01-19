@@ -28,10 +28,7 @@ export function CreateEranaClient(): EranaClient {
 
     // Orchestrators
     const myCardsOrchestrator = CreateMyCardOrchestrator(cardService);
-    const statusOrchestrator = CreateStatusOrchestrator(
-        applicationService,
-        systemService
-    );
+    const statusOrchestrator = CreateStatusOrchestrator(applicationService, systemService);
     
     // Events: slash commands
     const myCardsSubhandler = CreateMyCardsSubhandler(myCardsOrchestrator);
@@ -39,14 +36,14 @@ export function CreateEranaClient(): EranaClient {
     const statusSlashCommandHandler = new StatusSlashCommandHandler(statusOrchestrator);
 
     const slashCommandDispatcher = CreateSlashCommandDispatcher();
-    slashCommandDispatcher.RegisterHandler("cards", cardsSlashCommandHandler);
-    slashCommandDispatcher.RegisterHandler("status", statusSlashCommandHandler);
+    slashCommandDispatcher.RegisterHandler(CardsSlashCommandsHandler.Identifier, cardsSlashCommandHandler);
+    slashCommandDispatcher.RegisterHandler(StatusSlashCommandHandler.Identifier, statusSlashCommandHandler);
 
     // Events modals
     const cardUploadModal = new CardUpload(myCardsOrchestrator);
 
     const modalDispatcher = CreateModalDispatcher();
-    modalDispatcher.RegisterHandler(CardUpload.customId, cardUploadModal);
+    modalDispatcher.RegisterHandler(CardUpload.Identifier, cardUploadModal);
 
     // Application
     return new EranaClient(

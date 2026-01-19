@@ -12,6 +12,8 @@ export const StatusSlashCommandBuilder =
  * The command handler for the "Status" slash command
  */
 export class StatusSlashCommandHandler implements ISlashCommandHandler {
+  static Identifier = "status";
+  
   constructor(
     private readonly _statusOrchestrator: IOrchestration<void, StatusValue>
   ) { }

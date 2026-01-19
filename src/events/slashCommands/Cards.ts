@@ -52,6 +52,8 @@ export const CardsSlashCommandBuilder = new SlashCommandBuilder()
   )
 
 export class CardsSlashCommandsHandler implements ISlashCommandHandler {
+  static Identifier = "cards"
+
   constructor(
     private readonly _myCards: IMyCardsSubhandler
   ) { }

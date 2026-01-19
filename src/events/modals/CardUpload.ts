@@ -5,7 +5,7 @@ import { CardUploadRequest } from "../../orchestration/models/CardUploadRequest.
 import { CreateMyCardOrchestrator, IMyCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
 
 export class CardUpload implements IModalHandler {
-  static customId = "CardUpload"
+  static Identifier = "CardUpload"
 
   constructor(
     private readonly _myCardOrchestrator: IMyCardsOrchestrator
