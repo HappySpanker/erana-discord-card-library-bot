@@ -5,8 +5,10 @@ import { CardsSlashCommandsHandler } from "./events/slashCommands/Cards.js";
 import { CreateMyCardsSubhandler } from "./events/slashCommands/cards/MyCardsSubhandler.js";
 import { CreateSlashCommandDispatcher } from "./events/slashCommands/SlashCommandDispatcher.js";
 import { StatusSlashCommandHandler } from "./events/slashCommands/Status.js";
+import { CreateApplicationStore } from "./external/ApplicationStore.js";
 import { CreateCardStore } from "./external/CardStore.js";
 import { database_pool } from "./external/Database.js";
+import { CreateSystemStore } from "./external/SystemStore.js";
 import { CreateApplicationService } from "./logic/ApplicationService.js";
 import { CreateCardService } from "./logic/CardService.js";
 import { CreateSystemService } from "./logic/SystemService.js";
@@ -15,12 +17,14 @@ import { CreateStatusOrchestrator } from "./orchestration/StatusOrchestration.js
 
 export function CreateEranaClient(): EranaClient {
     // External
+    const applicationStore = CreateApplicationStore();
     const cardStore = CreateCardStore(database_pool);
+    const systemStore = CreateSystemStore();
 
     // Logic
+    const applicationService = CreateApplicationService(applicationStore);
     const cardService = CreateCardService(cardStore);
-    const applicationService = CreateApplicationService();
-    const systemService = CreateSystemService();
+    const systemService = CreateSystemService(systemStore);
 
     // Orchestrators
     const myCardsOrchestrator = CreateMyCardOrchestrator(cardService);

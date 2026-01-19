@@ -1,5 +1,5 @@
 import humanizeDuration from "humanize-duration";
-import { ISystemStore, SystemStore } from "../external/SystemStore.js";
+import { ISystemStore } from "../external/SystemStore.js";
 
 export interface ISystemService {
 
@@ -11,7 +11,9 @@ export interface ISystemService {
 class SystemService
     implements ISystemService {
 
-    private readonly _systemStore: ISystemStore = new SystemStore();
+    constructor(
+        private readonly _systemStore: ISystemStore
+    ) { }
 
     get hostname(): string {
         return this._systemStore.hostname;
@@ -26,6 +28,7 @@ class SystemService
     }
 }
 
-export function CreateSystemService(): ISystemService {
-    return new SystemService();
+export function CreateSystemService(
+    systemStore: ISystemStore): ISystemService {
+    return new SystemService(systemStore);
 }

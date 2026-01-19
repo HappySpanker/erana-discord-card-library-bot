@@ -1,4 +1,3 @@
-import humanizeDuration from "humanize-duration"
 import { hostname, uptime } from "os";
 
 export interface ISystemStore {
@@ -8,7 +7,7 @@ export interface ISystemStore {
     get uptime(): number;
 }
 
-export class SystemStore
+class SystemStore
     implements ISystemStore {
 
     get hostname(): string {
@@ -18,4 +17,8 @@ export class SystemStore
     get uptime(): number {
         return uptime();
     }
+}
+
+export function CreateSystemStore(): ISystemStore {
+    return new SystemStore();
 }
