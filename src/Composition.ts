@@ -25,7 +25,7 @@ export function CreateEranaClient(): EranaClient {
     // Events: slash commands
     const myCardsSubhandler = CreateMyCardsSubhandler(myCardsOrchestrator);
     const cardsSlashCommandHandler = new CardsSlashCommandsHandler(myCardsSubhandler);
-    const statusSlashCommandHandler = new StatusSlashCommandHandler();
+    const statusSlashCommandHandler = new StatusSlashCommandHandler(statusOrchestrator);
 
     const slashCommandDispatcher = CreateSlashCommandDispatcher();
     slashCommandDispatcher.RegisterHandler("cards", cardsSlashCommandHandler);
