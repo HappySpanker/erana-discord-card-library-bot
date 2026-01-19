@@ -1,5 +1,5 @@
 import { MessageFlags, ModalSubmitInteraction } from "discord.js";
-import { IModalHandler } from "./ModalDispatcher.js";
+import { IModalHandler } from "./ModalSubmitDispatcher.js";
 import { EphemeralReply } from "../utils/InteractionHelpers.js";
 import { CardUploadRequest } from "../../orchestration/models/CardUploadRequest.js";
 import { CreateMyCardOrchestrator, IMyCardsOrchestrator } from "../../orchestration/CardsOrchestrator.Mine.js";
@@ -48,7 +48,7 @@ export class CardUpload implements IModalHandler {
 
     // Build a card upload request
     const cardUloadRequest: CardUploadRequest = {
-      UserId: interaction.user.id,
+      CanonicalUserId: interaction.user.id,
       Visibility: visibility,
       Tagline: tagline,
       Json: json

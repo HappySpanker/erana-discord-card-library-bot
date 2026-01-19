@@ -7,6 +7,7 @@ import { CardModel } from "./models/CardModel.js";
 import { CardUploadRequest } from "./models/CardUploadRequest.js";
 import { CardUploadResponse } from "./models/CardUploadResponse.js";
 import { Temporal } from "@js-temporal/polyfill";
+import { IUserService } from "../logic/UserService.js";
 
 export interface IMyCardsOrchestrator {
   ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
@@ -16,7 +17,8 @@ export interface IMyCardsOrchestrator {
 class MyCardsOrchestrator implements IMyCardsOrchestrator {
 
   constructor(
-    private readonly _cardService: ICardService
+    private readonly _cardService: ICardService,
+    private readonly _userService: IUserService,
   ){ }
 
   /**
@@ -49,12 +51,14 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
   async UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
     logger.trace("MyCardsOrchestrator.uploadJson");
 
-    this._cardService.UploadCard(
-      cardUploadModel.UserId,
-      cardUploadModel.Visibility,
-      cardUploadModel.Tagline,
-      cardUploadModel.Json
-    );
+    const user = await this._userService.GetUserModelByCanonicalUserId(cardUploadModel.CanonicalUserId);
+
+    this._cardService.UploadCard({
+      userId: user.user_id,
+      visibility: cardUploadModel.Visibility,
+      tagline: cardUploadModel.Tagline,
+      json: cardUploadModel.Json
+    });
 
     return await Promise.resolve({
       success: true,
@@ -82,6 +86,11 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
   }
 }
 
-export function CreateMyCardOrchestrator(cardService: ICardService): IMyCardsOrchestrator {
-  return new MyCardsOrchestrator(cardService);
+export function CreateMyCardOrchestrator(
+  cardService: ICardService,
+  userService: IUserService): IMyCardsOrchestrator {
+  return new MyCardsOrchestrator(
+    cardService,
+    userService
+  );
 }

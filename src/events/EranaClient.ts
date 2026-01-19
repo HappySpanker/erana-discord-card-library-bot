@@ -1,16 +1,15 @@
 import { Client, Events, GatewayIntentBits, Interaction } from "discord.js";
 import { logger } from "../logger.js";
-import { ModalDispatcher } from "./modals/ModalDispatcher.js";
+import { ModalSubmitDispatcher } from "./modals/ModalSubmitDispatcher.js";
 import { ISlashCommandDispatcher } from "./slashCommands/SlashCommandDispatcher.js";
 
 export class EranaClient extends Client<boolean> {
-    private _modalSubmitDispatcher = new ModalDispatcher();
-
     /**
      * Create a new EranaClient which inherits/extends from the base discord.js client
      */
     constructor(
-        private readonly _slashCommandDispatcher: ISlashCommandDispatcher
+        private readonly _slashCommandDispatcher: ISlashCommandDispatcher,
+        private readonly _modalSubmitDispatcher: ModalSubmitDispatcher,
     ) {
         super({
             intents: [

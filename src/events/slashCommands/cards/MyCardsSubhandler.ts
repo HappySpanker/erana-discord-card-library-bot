@@ -103,6 +103,7 @@ class MyCardSubhandler implements IMyCardsSubhandler {
       .setCustomId("tagline")
       .setStyle(TextInputStyle.Paragraph)
       .setPlaceholder("Your amazing tag line that will sell your card!")
+      .setValue("hello, world!")
       .setRequired(false);
 
     const setTaglineLabel = new LabelBuilder()

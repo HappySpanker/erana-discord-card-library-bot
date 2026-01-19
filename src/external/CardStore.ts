@@ -2,10 +2,18 @@ import { Pool } from "pg";
 import { logger } from "../logger.js";
 import { database_pool } from "./Database.js";
 import { CardDTO } from "./models/cardDTO.js";
+import { subscribe } from "node:diagnostics_channel";
 
 export interface ICardStore {
   ListByUser(userId: string): Promise<Array<CardDTO>>
-  UploadByUser(userId: string): Promise<boolean>
+  UploadCard(request: UploadCardRequest): Promise<void>
+}
+
+export type UploadCardRequest = {
+  userId: number,
+  visibility: number,
+  tagline: string,
+  json: string,
 }
 
 class CardStore implements ICardStore {
@@ -14,8 +22,39 @@ class CardStore implements ICardStore {
     private readonly _pool: Pool
   ) { }
   
-  UploadByUser(userId: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  async UploadCard(request: UploadCardRequest): Promise<void> {
+    logger.trace({
+      userId: request.userId,
+      visibility: request.visibility,
+      tagline: request.tagline.substring(0, 32),
+      json: request.json.substring(0, 32)
+    },
+    "CardStore.Upload");
+
+    // Try to upload card
+    try {
+      await this._pool.query(`INSERT INTO public.cards(
+	user_id, card_json, tagline, visibility)
+	VALUES ($1, $2, $3, $4);`,
+        [
+          request.userId,
+          request.json,
+          request.tagline,
+          request.visibility
+        ]
+      );
+    } catch (err) {
+      logger.error({
+          userId: request.userId,
+          visibility: request.visibility,
+          tagline: request.tagline,
+          json: request.json.substring(0, 32),
+          err
+        },
+        "Error uploading card to database");
+
+      throw err;
+    }
   }
   
   /**

@@ -6,11 +6,17 @@ export interface IModalHandler {
     Handle(interaction: ModalSubmitInteraction): Promise<void>
 }
 
-export class ModalDispatcher {
+export interface IModalSubmitDispatcher {
+    Dispatch(interaction: ModalSubmitInteraction): Promise<void>;
+}
+
+export class ModalSubmitDispatcher implements IModalSubmitDispatcher {
     private readonly _handerMapping = new Map<string, IModalHandler>();
 
     async Dispatch(interaction: ModalSubmitInteraction): Promise<void> {
         const handler = this._handerMapping.get(interaction.customId);
+
+        console.error(this._handerMapping);
 
         // Sanity check
         if (!handler) {
@@ -40,10 +46,11 @@ export class ModalDispatcher {
     }
 
     RegisterHandler(key: string, handler: IModalHandler) {
+        console.error(key, handler);
         this._handerMapping.set(key, handler);
     }
 }
 
 export function CreateModalDisparcher() {
-    return new ModalDispatcher();
+    return new ModalSubmitDispatcher();
 }

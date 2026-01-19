@@ -6,8 +6,8 @@ export interface IUserStore {
 }
 
 export type UserDTO = {
-  userId: number,
-  canonicalUserId: string
+  user_id: number,
+  canonical_user_id: string
 }
 
 export class UserStore implements IUserStore {
@@ -17,16 +17,22 @@ export class UserStore implements IUserStore {
   ) { }
 
   async GetUserFromCanonicalUserId(canonicalUserId: string): Promise<UserDTO> {
+    logger.trace({
+      canonicalUserId
+    }, "UserStore.GetUserFromCanonicalUserId");
+
     try {
       const response = await this._pool.query<UserDTO>(
 `SELECT
-  u.userId,
-  u.canonicalUserId,
+  u.id as user_id,
+  u.canonical_user_id
 FROM users AS u
-WHERE u.canonicalUserId = $1`,
+WHERE u.canonical_user_id = $1`,
         [ canonicalUserId ]);
 
       const result = response.rows[0];
+
+      console.error(response, result, result?.canonical_user_id, result?.user_id);
 
       if (!result) {
         throw new Error("CanonicalUserId not found");

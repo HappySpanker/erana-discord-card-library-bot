@@ -1,5 +1,5 @@
 export type CardUploadRequest = {
-    UserId: string,
+    CanonicalUserId: string,
     Visibility: string,
     Tagline: string,
     Json: string,

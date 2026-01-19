@@ -2,40 +2,39 @@ import { CardContainer, TavernCardV2, TavernCardV3 } from "../Cards.js";
 import { logger } from "../logger.js";
 import { IsTavernCardV3 } from "./schemas/TavernCardV3Schema.js";
 import { IsTavernCardV2 } from "./schemas/TavernCardV2Schema.js";
-import { ICardStore } from "../external/CardStore.js";
+import { ICardStore, UploadCardRequest as externalUploadCardRequest } from "../external/CardStore.js";
 
 export interface ICardService {
   ListCards(userId: string): Promise<Array<CardContainer>>;
-  UploadCard(
-    userId: string,
-    visibility: string,
-    tagline: string,
-    json: string
-  ): Promise<void>;
+  UploadCard(request: UploadCardRequest): Promise<void>;
 }
+
+export type UploadCardRequest = {
+  userId: number,
+  visibility: string,
+  tagline: string,
+  json: string
+};
 
 class CardsService implements ICardService {
   constructor(
     private readonly _cardStore: ICardStore
   ) { }
 
-  async UploadCard(
-    userId: string,
-    visibility: string,
-    tagline: string,
-    json: string
-  ): Promise<void> {
+  async UploadCard(request: UploadCardRequest): Promise<void> {
     logger.trace({
-      UserId: userId,
-      visibility: visibility,
-      Tagline: tagline.substring(0, 32),
-      Json: json.substring(0, 32)
+      userId: request.userId,
+      visibility: request.visibility,
+      tagline: request.tagline.substring(0, 32),
+      json: request.json.substring(0, 32)
     },
     "CardsService.UploadCard");
 
-    const rawCard = JSON.parse(json);
+    // Parse
+    const rawCard = JSON.parse(request.json);
     let card: TavernCardV2;
 
+    // Validate
     if(IsTavernCardV3(rawCard)) {
       logger.debug("Trimming down ST TavernCardV3 instance to TavernCardV2");
       card = this.translateToTaverCardV2(rawCard);
@@ -45,7 +44,18 @@ class CardsService implements ICardService {
       throw new Error("Inbound JSON is not a TavernCardV2 nor ST TavernCardV3");
     }
 
-    
+    // Upload
+    try {
+      this._cardStore.UploadCard({
+        userId: request.userId,
+        json: request.json,
+        tagline: request.tagline,
+        visibility: this.translateVisbilityStringToNumber(request.visibility)
+      });
+    } catch(err) {
+      logger.error(err);
+      throw err;
+    }
   }
 
   async ListCards(userId: string): Promise<Array<CardContainer>> {
@@ -85,6 +95,17 @@ class CardsService implements ICardService {
       spec_version: "2.0",
       data: { ...card.data }
     }
+  }
+
+  private translateVisbilityStringToNumber(visbility: string): number {
+    switch (visbility.toLowerCase()) {
+      case "public": return 255;
+      case "shared": return 32;
+      case "listed": return 16;    
+      case "private": return 0;
+    }
+
+    throw new Error(`Value '${visbility}' is an invalid visibility`);
   }
 }
 
