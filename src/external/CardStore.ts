@@ -1,9 +1,8 @@
 import { Pool } from "pg";
 import { logger } from "../logger.js";
-import { database_pool } from "./Database.js";
 import { CardDTO } from "./models/cardDTO.js";
-import { subscribe } from "node:diagnostics_channel";
-import { AnyTavernCard, TavernCardV2 } from "../Cards.js";
+import { TavernCardV2 } from "../Cards.js";
+import { Temporal } from "@js-temporal/polyfill";
 
 export interface ICardStore {
   ListByUser(userId: string): Promise<Array<CardDTO>>
@@ -44,7 +43,10 @@ class CardStore implements ICardStore {
         ]
       );
 
-      return result.rows[0]!;
+      const brokenCardDTO = result.rows[0]!;
+      const cardDTO = this.fixDatesToTemporals(brokenCardDTO);
+
+      return cardDTO;
     } catch (err) {
       logger.error({
           userId: request.userId,
@@ -86,7 +88,8 @@ class CardStore implements ICardStore {
         [ userId ]
       );
 
-      return res.rows;
+      const cardDTOs = res.rows.map(dto => this.fixDatesToTemporals(dto));
+      return cardDTOs;
     } catch (err) {
       logger.error({
         err,
@@ -97,6 +100,17 @@ class CardStore implements ICardStore {
 
       throw err;
     }
+  }
+  
+  // Needed to deal with Temporal→Date→Temportal converstions
+  fixDatesToTemporals(dto: CardDTO): CardDTO {
+    const createdDate = (<unknown>dto.created) as Date;
+    const updateDate = (<unknown>dto.updated) as Date;
+
+    dto.created = Temporal.Instant.fromEpochMilliseconds(createdDate.getTime());
+    dto.updated = Temporal.Instant.fromEpochMilliseconds(updateDate.getTime());
+
+    return dto;
   }
 }
 
