@@ -51,6 +51,35 @@ export const CardsSlashCommandBuilder = new SlashCommandBuilder()
       )
   )
 
+export const CardSlashCommandBuilder = new SlashCommandBuilder()
+  .setName("card")
+  .setDescription("Handles singlle card actions")
+  .addSubcommand(sub => sub
+    .setName("upload")
+    .setDescription("Handled uploaded a new card")
+    .addStringOption(opt => opt
+      .setName("visibility")
+      .setDescription("What should the visibility of your card be?")
+      .setRequired(true)
+      .addChoices([
+        { name: "Private", value: "private" },
+        { name: "Shared", value: "shared" },
+        { name: "Public", value: "listed" },
+        { name: "public", value: "public" },
+      ])
+    )
+    .addStringOption(opt => opt
+      .setName("tagline")
+      .setRequired(true)
+      .setDescription("A tagline that will really sell your card!")
+    )
+    .addAttachmentOption(opt => opt
+      .setName("card")
+      .setRequired(true)
+      .setDescription("The card (either PNG or JSON) to upload")
+    )
+  )
+
 export class CardsSlashCommandsHandler implements ISlashCommandHandler {
   static Identifier = "cards"
 
