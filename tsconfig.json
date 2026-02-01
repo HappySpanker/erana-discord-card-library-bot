@@ -3,8 +3,8 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
+    "incremental": true,
     "noEmitOnError": true,
-
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true
   },
