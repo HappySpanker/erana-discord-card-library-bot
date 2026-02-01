@@ -1,5 +1,5 @@
 import { CacheType, ChatInputCommandInteraction } from "discord.js";
 
 export interface ISlashCommandHandler {
-    Handle(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>
+    Handle(interaction: ChatInputCommandInteraction): Promise<void>
 }

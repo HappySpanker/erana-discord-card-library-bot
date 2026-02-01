@@ -1,6 +1,6 @@
 import { REST, Routes } from "discord.js";
 import { StatusSlashCommandBuilder } from "../events/slashCommands/Status.js";
-import { CardSlashCommandBuilder, CardsSlashCommandBuilder } from "../events/slashCommands/Cards.js";
+import { CardSlashCommandBuilder } from "../events/slashCommands/Card.js";
 
 const rest = new REST({ version: "10" }).setToken(
   process.env.DISCORD_TOKEN!
@@ -15,7 +15,6 @@ async function register() {
     {
       body: [
         StatusSlashCommandBuilder.toJSON(),
-        CardsSlashCommandBuilder.toJSON(),
         CardSlashCommandBuilder.toJSON()
       ]
     }

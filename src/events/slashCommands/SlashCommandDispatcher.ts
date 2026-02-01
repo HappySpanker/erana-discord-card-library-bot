@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, CacheType, MessageFlags } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
-import { slashCommandInteractionLogger } from "../../logger.js";
+import { logger, slashCommandInteractionLogger } from "../../logger.js";
 import { GenericErrorEmbed } from "../utils/Embeds.js";
 
 export interface ISlashCommandDispatcher {
@@ -51,6 +51,10 @@ class SlashCommandDispatcher {
     }
 
     RegisterHandler(key: string, handler: ISlashCommandHandler) {
+        logger.trace({
+            "key": key,
+            "handler": typeof handler
+        }, "Adding ISlashCommandHandler to dispatcher")
         this._handlerMapping.set(key, handler);
     }
 }
