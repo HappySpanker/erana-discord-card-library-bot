@@ -2,6 +2,7 @@ import { EranaClient } from "./events/EranaClient.js";
 import { CreateModalDisparcher as CreateModalDispatcher } from "./events/modals/ModalSubmitDispatcher.js";
 import { CardSlashCommandHandler } from "./events/slashCommands/Card.js";
 import { CardsSlashCommandsHandler } from "./events/slashCommands/Cards.js";
+import { MineSlashCommandBuilder, MineSlashCommandHandler } from "./events/slashCommands/Mine.js";
 import { CreateSlashCommandDispatcher } from "./events/slashCommands/SlashCommandDispatcher.js";
 import { StatusSlashCommandHandler } from "./events/slashCommands/Status.js";
 import { CreateApplicationStore } from "./external/ApplicationStore.js";
@@ -36,11 +37,13 @@ export function CreateEranaClient(): EranaClient {
     // Events: slash commands
     const cardSlashCommandHandler = new CardSlashCommandHandler();
     const cardsSlashCommandHandler = new CardsSlashCommandsHandler();
+    const mineSlashCommandHandler = new MineSlashCommandHandler();
     const statusSlashCommandHandler = new StatusSlashCommandHandler(statusOrchestrator);
 
     const slashCommandDispatcher = CreateSlashCommandDispatcher();
     slashCommandDispatcher.RegisterHandler(CardSlashCommandHandler.Identifier, cardSlashCommandHandler);
     slashCommandDispatcher.RegisterHandler(CardsSlashCommandsHandler.Identifier, cardsSlashCommandHandler);
+    slashCommandDispatcher.RegisterHandler(MineSlashCommandHandler.Identifier, mineSlashCommandHandler);
     slashCommandDispatcher.RegisterHandler(StatusSlashCommandHandler.Identifier, statusSlashCommandHandler);
 
     // Events modals
