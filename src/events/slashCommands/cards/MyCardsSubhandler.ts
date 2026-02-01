@@ -1,8 +1,9 @@
-import { ChatInputCommandInteraction, EmbedBuilder, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ChatInputCommandInteraction, ContainerBuilder, FileUploadBuilder, LabelBuilder, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { CardUpload } from "../../modals/CardUpload.js";
 import { logger } from "../../../logger.js";
 import { IMyCardsOrchestrator } from "../../../orchestration/CardsOrchestrator.Mine.js";
 import { isDev } from "../../../Environment.js";
+import { CardListResponse } from "../../../orchestration/models/CardListResponse.js";
 
 export interface IMyCardsSubhandler {
   List(interaction: ChatInputCommandInteraction): Promise<void>;
@@ -14,7 +15,7 @@ class MyCardSubhandler implements IMyCardsSubhandler {
     private readonly _myCardsOrchestrator: IMyCardsOrchestrator
   ) { }
 
-  async List(interaction: ChatInputCommandInteraction): Promise<void> {
+  public async List(interaction: ChatInputCommandInteraction): Promise<void> {
     logger.trace({
       commandPath: "Cards:Mine:List",
       userId: interaction.user.id,
@@ -22,43 +23,29 @@ class MyCardSubhandler implements IMyCardsSubhandler {
       interactionId: interaction.id,
     }, "MyCards.List");
 
+    await interaction.deferReply({
+      flags: MessageFlags.Ephemeral
+    })
+
     // Prepare intial call to orchestrator
-    const cardsListResponse = await this._myCardsOrchestrator.ListCards(
+    const response = await this._myCardsOrchestrator.ListCards(
       false,
       interaction.user.id
     );
-
-    const embeds: Array<EmbedBuilder> = [];
-
-    for (let card of cardsListResponse.Items) {
-      embeds.push(new EmbedBuilder()
-        .setTitle(card.Name)
-        .setDescription(card.Tagline)
-        .setURL(card.URL)
-        .setFooter({
-          text: `Created: ${card.Created.toLocaleString(interaction.locale)}, updated: ${card.Updated.toLocaleString(interaction.locale)}`
-        }));
-    }
 
     const pagination = false;
     let msg: string = "";
 
     if (!pagination) {
-      msg = `Found a total of ${cardsListResponse.Items.length} card(s) belonging to you.`
+      msg = `Found a total of ${response.Items.length} card(s) belonging to you.`
     } else {
       msg = "Paginated reply"
     }
 
-    await interaction.reply({
-      content: msg,
-      embeds: embeds,
-      flags: [
-        MessageFlags.Ephemeral
-      ]
-    });
+    await this.listBuildEmbed(interaction, response);
   }
 
-  async Upload(interaction: ChatInputCommandInteraction): Promise<void> {
+  public async Upload(interaction: ChatInputCommandInteraction): Promise<void> {
     logger.trace("Handling Cards:Mine:Upload");
 
     const modal = new ModalBuilder()
@@ -135,6 +122,21 @@ class MyCardSubhandler implements IMyCardsSubhandler {
 
     // Show modal to the user
     await interaction.showModal(modal);
+  }
+
+  private async listBuildEmbed(
+    interaction: ChatInputCommandInteraction,
+    response: CardListResponse
+  ): Promise<void> {
+    await interaction.editReply({
+      components: [
+        new ContainerBuilder()
+          .addTextDisplayComponents(
+            tdc => tdc.setContent("WIP")
+          )
+        ],
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral
+    });
   }
 }
 
