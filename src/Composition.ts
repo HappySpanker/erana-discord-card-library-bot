@@ -35,16 +35,15 @@ export function CreateEranaClient(): EranaClient {
     const statusOrchestrator = CreateStatusOrchestrator(applicationService, systemService);
     
     // Events: slash commands
-    const cardSlashCommandHandler = new CardSlashCommandHandler();
-    const cardsSlashCommandHandler = new CardsSlashCommandsHandler();
-    const mineSlashCommandHandler = new MineSlashCommandHandler();
-    const statusSlashCommandHandler = new StatusSlashCommandHandler(statusOrchestrator);
+    const slashCommands = [
+        new CardSlashCommandHandler(),
+        new CardsSlashCommandsHandler(),
+        new MineSlashCommandHandler(),
+        new StatusSlashCommandHandler(statusOrchestrator)
+    ]
 
     const slashCommandDispatcher = CreateSlashCommandDispatcher();
-    slashCommandDispatcher.RegisterHandler(CardSlashCommandHandler.Identifier, cardSlashCommandHandler);
-    slashCommandDispatcher.RegisterHandler(CardsSlashCommandsHandler.Identifier, cardsSlashCommandHandler);
-    slashCommandDispatcher.RegisterHandler(MineSlashCommandHandler.Identifier, mineSlashCommandHandler);
-    slashCommandDispatcher.RegisterHandler(StatusSlashCommandHandler.Identifier, statusSlashCommandHandler);
+    slashCommandDispatcher.RegisterHandlers(slashCommands);
 
     // Events modals
     const modalSubmitDispatcher = CreateModalDispatcher();

@@ -5,7 +5,7 @@ import { GenericErrorEmbed } from "../utils/Embeds.js";
 
 export interface ISlashCommandDispatcher {
     Dispatch(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
-    RegisterHandler(key: string, handler: ISlashCommandHandler): void;
+    RegisterHandlers(handlers: ISlashCommandHandler[]): void;
 }
 
 class SlashCommandDispatcher {
@@ -50,12 +50,21 @@ class SlashCommandDispatcher {
         }
     }
 
-    RegisterHandler(key: string, handler: ISlashCommandHandler) {
-        logger.trace({
-            "key": key,
-            "handler": typeof handler
-        }, "Adding ISlashCommandHandler to dispatcher")
-        this._handlerMapping.set(key, handler);
+    public RegisterHandlers(handlers: ISlashCommandHandler[]) {
+        handlers.forEach(handler => {
+            const id = handler.Identifier;
+
+            // Duplicates should throw an error
+            if (this._handlerMapping.has(id)) {
+                throw new Error(`Can not add duplicate identifier '${id}' to SlashCommandDispatcher`)
+            }
+
+            logger.trace({
+                identifier: id,
+            }, `Adding '${id}' to SlashCommandDispatcher`);
+
+            this._handlerMapping.set(id, handler);
+        })
     }
 }
 

@@ -12,7 +12,7 @@ export const StatusSlashCommandBuilder =
  * The command handler for the "Status" slash command
  */
 export class StatusSlashCommandHandler implements ISlashCommandHandler {
-  static Identifier = "status";
+  Identifier = "status";
   
   constructor(
     private readonly _statusOrchestrator: IOrchestration<void, StatusValue>
@@ -27,7 +27,7 @@ export class StatusSlashCommandHandler implements ISlashCommandHandler {
       .Orchestrate();
 
     await interaction.editReply({
-      embeds: [this.statusEmbedBuilder(statusValue)],
+      embeds: [this.statusEmbedBuilder(statusValue)], 
     })
   }
 

@@ -32,7 +32,7 @@ export const CardSlashCommandBuilder = new SlashCommandBuilder()
   )
 
 export class CardSlashCommandHandler implements ISlashCommandHandler {
-  static Identifier = "card";
+  Identifier = "card";
 
   async Handle(interaction: ChatInputCommandInteraction): Promise<void> {
     switch (interaction.options.getSubcommand(true)) {

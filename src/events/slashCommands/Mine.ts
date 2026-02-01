@@ -19,7 +19,7 @@ export const MineSlashCommandBuilder = new SlashCommandBuilder()
   )
 
 export class MineSlashCommandHandler implements ISlashCommandHandler {
-  static Identifier = "mine";
+  Identifier = "mine";
 
   async Handle(interaction: ChatInputCommandInteraction): Promise<void> {
     switch (interaction.options.getSubcommand(true)) {
