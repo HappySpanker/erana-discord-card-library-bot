@@ -33,7 +33,7 @@ export function CreateEranaClient(): EranaClient {
 
     // Orchestrators
     const myCardsOrchestrator = CreateMyCardOrchestrator(cardService, userService);
-    const cardOrchestrator = CreateCardOrchestrator();
+    const cardOrchestrator = CreateCardOrchestrator(cardService, userService);
     const statusOrchestrator = CreateStatusOrchestrator(applicationService, systemService);
     
     // Events: slash commands
