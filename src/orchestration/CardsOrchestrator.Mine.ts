@@ -3,7 +3,7 @@ import { CardContainer } from "../Cards.js";
 import { ICardService } from "../logic/CardService.js";
 import { IUserService } from "../logic/UserService.js";
 import { CardListResponse, CardUploadRequest, CardUploadResponse } from "./models/Card.js";
-import { CardModel, Pagination } from "./models/Common.js";
+import { CardListModel, Pagination } from "./models/Common.js";
 
 export interface IMyCardsOrchestrator {
   ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
@@ -36,6 +36,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
 
     // Populate and return the response
     return {
+      Success: true,
       Items: cards.map(this.cardContainerToCardListItem),
       Pagination: false // TODO: check where this should come from
     }
@@ -74,7 +75,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
     }
   }
 
-  private cardContainerToCardListItem(cardContainer: CardContainer): CardModel {
+  private cardContainerToCardListItem(cardContainer: CardContainer): CardListModel {
     // Safe defaults for now
     return {
       Name: cardContainer.Card.data.name,

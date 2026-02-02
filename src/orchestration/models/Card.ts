@@ -1,4 +1,4 @@
-import { CardModel, Error, Pagination } from "./Common.js"
+import { CardListModel, CardUpdateModel, CardUploadModel, ErrorResponse, Pagination } from "./Common.js"
 
 export type CardUploadRequest = {
     CanonicalUserId: string,
@@ -7,8 +7,9 @@ export type CardUploadRequest = {
     Json: string,
 }
 
-export type CardUploadResponse = Error & {
-    Result: CardModel
+export type CardUploadResponse = ErrorResponse | {
+    Success: true,
+    Result: CardUploadModel
 }
 
 export type CardUpdateRequest = {
@@ -19,12 +20,14 @@ export type CardUpdateRequest = {
     Json: string | null,
 }
 
-export type CardUpdateResponse = Error & {
-    Result: CardModel
+export type CardUpdateResponse = ErrorResponse | {
+    Success: true,
+    Result: CardUpdateModel
 }
 
 // Card List
-export type CardListResponse = {
-    Items: Array<CardModel>,
+export type CardListResponse = ErrorResponse | {
+    Success: true,
+    Items: CardListModel[],
     Pagination?: Pagination
 }

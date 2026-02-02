@@ -1,6 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 
-export type CardModel = {
+export type CardUpdateModel = {
     Name: string;
     CanonicalUserId: string;
     Tagline: string;
@@ -9,9 +9,27 @@ export type CardModel = {
     Updated: Temporal.Instant;
 }
 
-export type Error = {
-    Success: boolean,
-    Error?: string
+export type CardUploadModel = {
+    Name: string;
+    CanonicalUserId: string;
+    Tagline: string;
+    URL: string;
+    Created: Temporal.Instant;
+    Updated: Temporal.Instant;
+}
+
+export type CardListModel = {
+    Name: string;
+    CanonicalUserId: string;
+    Tagline: string;
+    URL: string;
+    Created: Temporal.Instant;
+    Updated: Temporal.Instant;
+}
+
+export type ErrorResponse = {
+    Success: false,
+    Error: string
 }
 
 export type Pagination = false | {
