@@ -1,66 +1,43 @@
-import { CardContainer, TavernCardV2, TavernCardV3 } from "../Cards.js";
+import { CardContainer } from "../Cards.js";
 import { logger } from "../logger.js";
-import { IsTavernCardV3 } from "./schemas/TavernCardV3Schema.js";
-import { IsTavernCardV2 } from "./schemas/TavernCardV2Schema.js";
-import { ICardStore, UploadCardRequest as externalUploadCardRequest } from "../external/CardStore.js";
+import { ICardStore } from "../external/CardStore.js";
+import { UploadInput, UploadOutput } from "./models/Card.js";
+import { TranslateVisbilityStringToNumber, TranslateVisibilityNumberToString } from "./utils/Visbility.js";
 
 export interface ICardService {
   ListCards(userId: string): Promise<Array<CardContainer>>;
-  UploadCard(request: UploadCardRequest): Promise<CardContainer<TavernCardV2>>;
+  Upload(request: UploadInput): Promise<UploadOutput>;
 }
-
-export type UploadCardRequest = {
-  userId: number,
-  visibility: string,
-  tagline: string,
-  json: string
-};
 
 class CardsService implements ICardService {
   constructor(
     private readonly _cardStore: ICardStore
   ) { }
 
-  async UploadCard(request: UploadCardRequest): Promise<CardContainer<TavernCardV2>> {
+  async Upload(request: UploadInput): Promise<UploadOutput> {
     logger.trace({
-      userId: request.userId,
-      visibility: request.visibility,
-      tagline: request.tagline.substring(0, 32),
-      json: request.json.substring(0, 32)
+      UserId: request.UserId,
+      Visibility: request.Visibility,
+      Tagline: request.Tagline.substring(0, 32)
     },
     "CardsService.UploadCard");
 
-    // Parse
-    const rawCard = JSON.parse(request.json);
-    let card: TavernCardV2;
-
-    // Validate
-    if(IsTavernCardV3(rawCard)) {
-      logger.debug("Trimming down ST TavernCardV3 instance to TavernCardV2");
-      card = this.translateToTaverCardV2(rawCard);
-    } else if (IsTavernCardV2(rawCard)) {
-      card = rawCard;
-    } else {
-      throw new Error("Inbound JSON is not a TavernCardV2 nor ST TavernCardV3");
-    }
-
     // Upload
     try {
-      const result = await this._cardStore.UploadCard({
-        userId: request.userId,
-        card: card,
-        tagline: request.tagline,
-        visibility: this.translateVisbilityStringToNumber(request.visibility)
+      const dto = await this._cardStore.UploadCard({
+        user_id: request.UserId,
+        card: request.Card,
+        tagline: request.Tagline,
+        visibility: TranslateVisbilityStringToNumber(request.Visibility)
       });
 
-      return new CardContainer(
-        result.card,
-        result.visibility,
-        result.user_id,
-        result.created,
-        result.updated,
-        result.tagline
-      )
+      return {
+        Tagline: dto.tagline,
+        UserId: Number(dto.user_id),
+        Visibility: TranslateVisibilityNumberToString(dto.visibility),
+        Card: dto.card,
+
+      }
     } catch(err) {
       logger.error(err);
       throw err;
@@ -83,38 +60,13 @@ class CardsService implements ICardService {
     return cardDTOs.map(dto => {
       return new CardContainer(
         dto.card,
-        dto.visibility,
-        dto.user_id,
+        TranslateVisibilityNumberToString(dto.visibility),
+        dto.user_id.toString(),
         dto.created,
         dto.updated,
         dto.tagline
       )
     });
-  }
-
-  /**
-   * While the ST V3 is a proper idea; it's verbose and there's no need to 
-   * keep V1 backwards compatibility in store.
-   * @param card The TavernV3Card to transform
-   * @returns A true TavernCardV2
-   */
-  private translateToTaverCardV2(card: TavernCardV3): TavernCardV2 {
-    return {
-      spec: "chara_card_v2",
-      spec_version: "2.0",
-      data: { ...card.data }
-    }
-  }
-
-  private translateVisbilityStringToNumber(visbility: string): number {
-    switch (visbility.toLowerCase()) {
-      case "public": return 255;
-      case "shared": return 32;
-      case "listed": return 16;    
-      case "private": return 0;
-    }
-
-    throw new Error(`Value '${visbility}' is an invalid visibility`);
   }
 }
 

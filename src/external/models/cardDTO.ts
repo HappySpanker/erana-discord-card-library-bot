@@ -7,8 +7,8 @@ import { TavernCardV2 } from "../../Cards.js"
  */
 export type CardDTO = {
   id: number,
-  visibility: string,
-  user_id: string,
+  visibility: number,
+  user_id: number,
   tagline: string,
   card: TavernCardV2,
   created: Temporal.Instant,

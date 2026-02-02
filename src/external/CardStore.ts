@@ -6,14 +6,7 @@ import { Temporal } from "@js-temporal/polyfill";
 
 export interface ICardStore {
   ListByUser(userId: string): Promise<Array<CardDTO>>
-  UploadCard(request: UploadCardRequest): Promise<CardDTO>
-}
-
-export type UploadCardRequest = {
-  userId: number,
-  visibility: number,
-  tagline: string,
-  card: TavernCardV2
+  UploadCard(dto: Partial<CardDTO>): Promise<CardDTO>
 }
 
 class CardStore implements ICardStore {
@@ -22,11 +15,11 @@ class CardStore implements ICardStore {
     private readonly _pool: Pool
   ) { }
   
-  async UploadCard(request: UploadCardRequest): Promise<CardDTO> {
+  async UploadCard(dto: Partial<CardDTO>): Promise<CardDTO> {
     logger.trace({
-      userId: request.userId,
-      visibility: request.visibility,
-      tagline: request.tagline.substring(0, 32),
+      userId: dto.user_id,
+      visibility: dto.visibility,
+      tagline: dto.tagline?.substring(0, 32),
     },
     "CardStore.Upload");
 
@@ -36,10 +29,10 @@ class CardStore implements ICardStore {
 	user_id, card, tagline, visibility)
 	VALUES ($1, $2, $3, $4) RETURNING *;`,
         [
-          request.userId,
-          request.card,
-          request.tagline,
-          request.visibility
+          dto.user_id,
+          dto.card,
+          dto.tagline,
+          dto.visibility
         ]
       );
 
@@ -49,9 +42,9 @@ class CardStore implements ICardStore {
       return cardDTO;
     } catch (err) {
       logger.error({
-          userId: request.userId,
-          visibility: request.visibility,
-          tagline: request.tagline,
+          userId: dto.user_id,
+          visibility: dto.visibility,
+          tagline: dto.tagline?.substring(0, 32),
           err
         },
         "Error uploading card to database");
@@ -103,7 +96,7 @@ class CardStore implements ICardStore {
   }
   
   // Needed to deal with Temporal→Date→Temportal converstions
-  fixDatesToTemporals(dto: CardDTO): CardDTO {
+  private fixDatesToTemporals(dto: CardDTO): CardDTO {
     const createdDate = (<unknown>dto.created) as Date;
     const updateDate = (<unknown>dto.updated) as Date;
 

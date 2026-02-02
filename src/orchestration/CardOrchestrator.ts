@@ -3,6 +3,8 @@ import { logger } from "../logger.js";
 import { CardUpdateRequest, CardUpdateResponse, CardUploadRequest, CardUploadResponse } from "./models/Card.js";
 import { ICardService } from "../logic/CardService.js";
 import { IUserService } from "../logic/UserService.js";
+import { TavernCardV2Schema } from "../logic/schemas/TavernCardV2Schema.js";
+import { TavernCardV2 } from "../Cards.js";
 
 export interface ICardOrchestrator {
     Upload(request: CardUploadRequest): Promise<CardUploadResponse>
@@ -21,11 +23,11 @@ class CardOrchestrator implements ICardOrchestrator {
         // Get logical user ID from canonical user ID
         const userId = await this.userService.GetUserModelByCanonicalUserId(request.CanonicalUserId);
 
-        const uploadResult = await this.cardService.UploadCard({
-            tagline: request.Tagline,
-            userId: userId.user_id,
-            visibility: request.Visibility,
-            json: request.Json
+        const uploadResult = await this.cardService.Upload({
+            Tagline: request.Tagline,
+            UserId: userId.user_id,
+            Visibility: request.Visibility,
+            Card: <TavernCardV2>{} // HACK, FIXME
         })
 
         // WIP placeholder

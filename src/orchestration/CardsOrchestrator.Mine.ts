@@ -7,7 +7,6 @@ import { CardListModel, Pagination } from "./models/Common.js";
 
 export interface IMyCardsOrchestrator {
   ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
-  UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse>;
 }
 
 class MyCardsOrchestrator implements IMyCardsOrchestrator {
@@ -39,39 +38,6 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
       Success: true,
       Items: cards.map(this.cardContainerToCardListItem),
       Pagination: false // TODO: check where this should come from
-    }
-  }
-
-  /**
-   * Handle uploading JSON file
-   */
-  async UploadJson(cardUploadModel: CardUploadRequest): Promise<CardUploadResponse> {
-    logger.trace({
-      canonicalUserId: cardUploadModel.CanonicalUserId,
-      tagline: cardUploadModel.Tagline,
-      visibility: cardUploadModel.Visibility,
-      json: cardUploadModel.Json.substring(0, 64),
-    }, "MyCardsOrchestrator.uploadJson");
-
-    const user = await this._userService.GetUserModelByCanonicalUserId(cardUploadModel.CanonicalUserId);
-
-    const cardContainer = await this._cardService.UploadCard({
-      userId: user.user_id,
-      visibility: cardUploadModel.Visibility,
-      tagline: cardUploadModel.Tagline,
-      json: cardUploadModel.Json
-    });
-
-    return {
-      Success: true,
-      Result: {
-        Name: cardContainer.Card.data.name,
-        Created: cardContainer.Created,
-        Updated: cardContainer.Updated,
-        Tagline: cardContainer.Tagline,
-        URL: `http://localhost/${Math.floor(Math.random()*1000)}`,
-        CanonicalUserId: user.canonical_user_id
-      }
     }
   }
 
