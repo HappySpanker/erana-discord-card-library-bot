@@ -4,10 +4,8 @@ import { CardListResponse } from "./models/CardListResponse.js";
 import { Pagination } from "./models/Pagination.js";
 import { ICardService } from "../logic/CardService.js";
 import { CardModel } from "./models/CardModel.js";
-import { CardUploadRequest } from "./models/CardUploadRequest.js";
-import { CardUploadResponse } from "./models/CardUploadResponse.js";
-import { Temporal } from "@js-temporal/polyfill";
 import { IUserService } from "../logic/UserService.js";
+import { CardUploadRequest, CardUploadResponse } from "./models/Card.js";
 
 export interface IMyCardsOrchestrator {
   ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
@@ -66,8 +64,8 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
     });
 
     return {
-      success: true,
-      item: {
+      Success: true,
+      Result: {
         Name: cardContainer.Card.data.name,
         Created: cardContainer.Created,
         Updated: cardContainer.Updated,

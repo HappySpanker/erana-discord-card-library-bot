@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
 import { logger } from "../../logger.js";
-import { EphemeralReply, GetJsonForSinglettachment } from "../utils/InteractionHelpers.js";
+import { EphemeralReply, GetJsonFromAttachment, GetJsonFromInteractionByAttachmentName } from "../utils/InteractionHelpers.js";
 import { ICardOrchestrator } from "../../orchestration/CardOrchestrator.js";
-import { CardUploadRequest } from "../../orchestration/models/CardUploadRequest.js";
+import { CardUpdateRequest, CardUploadRequest } from "../../orchestration/models/Card.js";
 
 export const CardSlashCommandBuilder = new SlashCommandBuilder()
   .setName("card")
@@ -90,6 +90,22 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
       return;
     }
 
+    // Sanity checks
+    if (!identifier) throw new Error("Identifier not set");
+
+    const request: CardUpdateRequest = {
+      CanonicalUserId: interaction.user.id,
+      Identifier: identifier,
+      Json: card ? await GetJsonFromAttachment(card) : null,
+      Tagline: tagline,
+      Visibility: visibility
+    }
+
+    // Call orchestrator
+    const response = await this.cardOrchestrator.Update(request);
+
+    logger.trace(response);
+
     await EphemeralReply(interaction, "update noop")
   }
 
@@ -119,12 +135,14 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
       CanonicalUserId: interaction.user.id,
       Tagline: tagline,
       Visibility: visibility,
-      Json: await GetJsonForSinglettachment(interaction, "card"),
+      Json: await GetJsonFromInteractionByAttachmentName(interaction, "card"),
     }
 
     // Call orchestrator
     const response = await this.cardOrchestrator.Upload(request);
 
+    logger.trace(response);
+    
     await EphemeralReply(interaction, "upload noop")
   }
 }

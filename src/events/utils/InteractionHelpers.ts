@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, InteractionResponse, MessageFlags, RepliableInteraction } from "discord.js";
+import { Attachment, ChatInputCommandInteraction, InteractionResponse, MessageFlags, RepliableInteraction } from "discord.js";
 import { logger } from "../../logger.js";
 
 export async function EphemeralReply(interaction: RepliableInteraction, message: string): Promise<InteractionResponse<boolean>> {
@@ -8,7 +8,7 @@ export async function EphemeralReply(interaction: RepliableInteraction, message:
     });
 }
 
-export async function GetJsonForSinglettachment(
+export async function GetJsonFromInteractionByAttachmentName(
     interaction: ChatInputCommandInteraction,
     name: string): Promise<string> {
     logger.debug({
@@ -17,6 +17,14 @@ export async function GetJsonForSinglettachment(
     }, `Attempting to retrieve attachment '${name}' from interaction '${interaction.id}'`)
 
     const attachment = interaction.options.getAttachment(name, true);
+    return await GetJsonFromAttachment(attachment);
+}
+
+export async function GetJsonFromAttachment(attachment: Attachment): Promise<string> {
+    logger.trace({
+        url: attachment.url
+    }, "Downloading attachment");
+    
     const card = await fetch(attachment.url);
     return await card.text();
 }
