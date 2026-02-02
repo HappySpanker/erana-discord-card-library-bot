@@ -1,11 +1,9 @@
 import { logger } from "../logger.js";
 import { CardContainer } from "../Cards.js";
-import { CardListResponse } from "./models/CardListResponse.js";
-import { Pagination } from "./models/Pagination.js";
 import { ICardService } from "../logic/CardService.js";
-import { CardContext } from "./models/CardContext.js";
 import { IUserService } from "../logic/UserService.js";
-import { CardUploadRequest, CardUploadResponse } from "./models/Card.js";
+import { CardListResponse, CardUploadRequest, CardUploadResponse } from "./models/Card.js";
+import { CardModel, Pagination } from "./models/Common.js";
 
 export interface IMyCardsOrchestrator {
   ListCards(pagination: Pagination, canonicalUserId: string): Promise<CardListResponse>;
@@ -76,7 +74,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
     }
   }
 
-  private cardContainerToCardListItem(cardContainer: CardContainer): CardContext {
+  private cardContainerToCardListItem(cardContainer: CardContainer): CardModel {
     // Safe defaults for now
     return {
       Name: cardContainer.Card.data.name,

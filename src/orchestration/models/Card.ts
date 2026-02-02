@@ -1,5 +1,4 @@
-import { CardContext } from "./CardContext.js"
-import { Error } from "./Common.js"
+import { CardModel, Error, Pagination } from "./Common.js"
 
 export type CardUploadRequest = {
     CanonicalUserId: string,
@@ -9,7 +8,7 @@ export type CardUploadRequest = {
 }
 
 export type CardUploadResponse = Error & {
-    Result: CardContext
+    Result: CardModel
 }
 
 export type CardUpdateRequest = {
@@ -21,5 +20,11 @@ export type CardUpdateRequest = {
 }
 
 export type CardUpdateResponse = Error & {
-    Result: CardContext
+    Result: CardModel
+}
+
+// Card List
+export type CardListResponse = {
+    Items: Array<CardModel>,
+    Pagination?: Pagination
 }

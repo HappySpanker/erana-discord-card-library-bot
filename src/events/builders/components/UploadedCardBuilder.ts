@@ -1,8 +1,8 @@
 import { ContainerBuilder } from "discord.js";
 import { CardBuilder } from "./CardBuilder.js";
-import { CardContext } from "../../../orchestration/models/CardContext.js";
+import { CardModel } from "../../../orchestration/models/Common.js";
 
-export function UploadedCardBuilder(card: CardContext): ContainerBuilder {
+export function UploadedCardBuilder(card: CardModel): ContainerBuilder {
   return new ContainerBuilder()
     .setAccentColor(0x10AA10)
     .addTextDisplayComponents(
