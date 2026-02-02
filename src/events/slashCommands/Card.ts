@@ -1,7 +1,9 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { ISlashCommandHandler } from "./interfaces/ICommandHandler.js";
 import { logger } from "../../logger.js";
-import { EphemeralReply } from "../utils/InteractionHelpers.js";
+import { EphemeralReply, GetJsonForSinglettachment } from "../utils/InteractionHelpers.js";
+import { ICardOrchestrator } from "../../orchestration/CardOrchestrator.js";
+import { CardUploadRequest } from "../../orchestration/models/CardUploadRequest.js";
 
 export const CardSlashCommandBuilder = new SlashCommandBuilder()
   .setName("card")
@@ -65,6 +67,10 @@ export const CardSlashCommandBuilder = new SlashCommandBuilder()
 export class CardSlashCommandHandler implements ISlashCommandHandler {
   Identifier = "card";
 
+  constructor(
+    private readonly cardOrchestrator: ICardOrchestrator
+  ) {}
+
   async Handle(interaction: ChatInputCommandInteraction): Promise<void> {
     switch (interaction.options.getSubcommand(true)) {
       case "update": return this.update(interaction);
@@ -88,11 +94,14 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
   }
 
   private async upload(interaction: ChatInputCommandInteraction): Promise<void> {
+    logger.trace("CardSlashCommandHandler.upload");
+    
     const visibility = interaction.options.getString("visibility");
     const tagline = interaction.options.getString("tagline");
     const card = interaction.options.getAttachment("card");
 
     // Sanity checks
+    if (!tagline) throw new Error("Tagline not set");
     if (!visibility) throw new Error("Visibility not set");
     if (!card) throw new Error("Card missing");
 
@@ -103,7 +112,18 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
         name: card.name,
         size: card.size
       }
-    })
+    }, "Handling card upload")
+
+    // Prepare request
+    const request: CardUploadRequest = {
+      CanonicalUserId: interaction.user.id,
+      Tagline: tagline,
+      Visibility: visibility,
+      Json: await GetJsonForSinglettachment(interaction, "card"),
+    }
+
+    // Call orchestrator
+    const response = await this.cardOrchestrator.Upload(request);
 
     await EphemeralReply(interaction, "upload noop")
   }

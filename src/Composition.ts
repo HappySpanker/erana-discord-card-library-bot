@@ -14,6 +14,7 @@ import { CreateApplicationService } from "./logic/ApplicationService.js";
 import { CreateCardService } from "./logic/CardService.js";
 import { CreateSystemService } from "./logic/SystemService.js";
 import { CreateUserService } from "./logic/UserService.js";
+import { CreateCardOrchestrator } from "./orchestration/CardOrchestrator.js";
 import { CreateMyCardOrchestrator } from "./orchestration/CardsOrchestrator.Mine.js";
 import { CreateStatusOrchestrator } from "./orchestration/StatusOrchestration.js";
 
@@ -32,11 +33,12 @@ export function CreateEranaClient(): EranaClient {
 
     // Orchestrators
     const myCardsOrchestrator = CreateMyCardOrchestrator(cardService, userService);
+    const cardOrchestrator = CreateCardOrchestrator();
     const statusOrchestrator = CreateStatusOrchestrator(applicationService, systemService);
     
     // Events: slash commands
     const slashCommands = [
-        new CardSlashCommandHandler(),
+        new CardSlashCommandHandler(cardOrchestrator),
         new CardsSlashCommandsHandler(),
         new MineSlashCommandHandler(),
         new StatusSlashCommandHandler(statusOrchestrator)
