@@ -21,6 +21,13 @@ class CardOrchestrator implements ICardOrchestrator {
         // Get logical user ID from canonical user ID
         const userId = await this.userService.GetUserModelByCanonicalUserId(request.CanonicalUserId);
 
+        const uploadResult = await this.cardService.UploadCard({
+            tagline: request.Tagline,
+            userId: userId.user_id,
+            visibility: request.Visibility,
+            json: request.Json
+        })
+
         // WIP placeholder
         return {
             Success: true,

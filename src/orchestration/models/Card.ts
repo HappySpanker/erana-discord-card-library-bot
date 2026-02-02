@@ -1,5 +1,4 @@
-import { any, object } from "zod"
-import { CardModel } from "./CardModel.js"
+import { CardContext } from "./CardContext.js"
 import { Error } from "./Common.js"
 
 export type CardUploadRequest = {
@@ -10,7 +9,7 @@ export type CardUploadRequest = {
 }
 
 export type CardUploadResponse = Error & {
-    Result: CardModel
+    Result: CardContext
 }
 
 export type CardUpdateRequest = {
@@ -22,5 +21,5 @@ export type CardUpdateRequest = {
 }
 
 export type CardUpdateResponse = Error & {
-    Result: CardModel
+    Result: CardContext
 }

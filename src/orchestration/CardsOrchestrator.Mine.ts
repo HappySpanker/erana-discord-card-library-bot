@@ -3,7 +3,7 @@ import { CardContainer } from "../Cards.js";
 import { CardListResponse } from "./models/CardListResponse.js";
 import { Pagination } from "./models/Pagination.js";
 import { ICardService } from "../logic/CardService.js";
-import { CardModel } from "./models/CardModel.js";
+import { CardContext } from "./models/CardContext.js";
 import { IUserService } from "../logic/UserService.js";
 import { CardUploadRequest, CardUploadResponse } from "./models/Card.js";
 
@@ -76,7 +76,7 @@ class MyCardsOrchestrator implements IMyCardsOrchestrator {
     }
   }
 
-  private cardContainerToCardListItem(cardContainer: CardContainer): CardModel {
+  private cardContainerToCardListItem(cardContainer: CardContainer): CardContext {
     // Safe defaults for now
     return {
       Name: cardContainer.Card.data.name,

@@ -1,6 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 
-export type CardModel = {
+export type CardContext = {
     Name: string;
     CanonicalUserId: string;
     Tagline: string;

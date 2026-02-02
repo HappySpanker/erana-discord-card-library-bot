@@ -1,8 +1,7 @@
-import { CardContainer } from "../../Cards.js"
-import { CardModel } from "./CardModel.js"
+import { CardContext } from "./CardContext.js"
 import { Pagination } from "./Pagination.js"
 
 export type CardListResponse = {
-    Items: Array<CardModel>,
+    Items: Array<CardContext>,
     Pagination?: Pagination
 }

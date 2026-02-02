@@ -1,7 +1,7 @@
 import { SectionBuilder } from "discord.js";
-import { CardModel } from "../../../orchestration/models/CardModel.js";
+import { CardContext } from "../../../orchestration/models/CardContext.js";
 
-export function CardBuilder(cardModel: CardModel): SectionBuilder {
+export function CardBuilder(cardModel: CardContext): SectionBuilder {
   const createdTimestamp = Math.floor(cardModel.Created.epochMilliseconds / 1000);
   const updateTimestamp = Math.floor(cardModel.Updated.epochMilliseconds / 1000);
   const tags = ["OC", "Female", "Elf", "Kemonomimi"]
