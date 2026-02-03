@@ -24,7 +24,7 @@ class CardsService implements ICardService {
 
     // Upload
     try {
-      const dto = await this._cardStore.UploadCard({
+      const dto = await this._cardStore.Upload({
         user_id: request.UserId,
         card: request.Card,
         tagline: request.Tagline,
