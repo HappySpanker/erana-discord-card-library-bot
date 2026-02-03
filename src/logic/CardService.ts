@@ -1,12 +1,12 @@
-import { CardContainer } from "../Cards.js";
+import { CardContainer, TavernCardV2 } from "../Cards.js";
 import { logger } from "../logger.js";
 import { ICardStore } from "../external/CardStore.js";
-import { UploadInput, UploadOutput } from "./models/Card.js";
+import { UploadInput } from "./models/Card.js";
 import { TranslateVisbilityStringToNumber, TranslateVisibilityNumberToString } from "./utils/Visbility.js";
 
 export interface ICardService {
-  ListCards(userId: string): Promise<Array<CardContainer>>;
-  Upload(request: UploadInput): Promise<UploadOutput>;
+  ListCards(userId: string): Promise<CardContainer<TavernCardV2>[]>;
+  Upload(request: UploadInput): Promise<CardContainer<TavernCardV2>>;
 }
 
 class CardsService implements ICardService {
@@ -14,7 +14,7 @@ class CardsService implements ICardService {
     private readonly _cardStore: ICardStore
   ) { }
 
-  async Upload(request: UploadInput): Promise<UploadOutput> {
+  async Upload(request: UploadInput): Promise<CardContainer<TavernCardV2>> {
     logger.trace({
       UserId: request.UserId,
       Visibility: request.Visibility,
@@ -28,23 +28,25 @@ class CardsService implements ICardService {
         user_id: request.UserId,
         card: request.Card,
         tagline: request.Tagline,
-        visibility: TranslateVisbilityStringToNumber(request.Visibility)
+        visibility: request.Visibility
       });
 
-      return {
-        Tagline: dto.tagline,
-        UserId: Number(dto.user_id),
-        Visibility: TranslateVisibilityNumberToString(dto.visibility),
-        Card: dto.card,
+      return new CardContainer<TavernCardV2>(
+        dto.card,
+        dto.visibility,
+        dto.tagline,
+        dto.user_id,
+        dto.created,
+        dto.updated,
+      )
 
-      }
     } catch(err) {
       logger.error(err);
       throw err;
     }
   }
 
-  async ListCards(userId: string): Promise<Array<CardContainer>> {
+  async ListCards(userId: string): Promise<CardContainer<TavernCardV2>[]> {
     logger.trace("CardsService.ListCards");
 
     // TODO: try cache first
@@ -58,13 +60,13 @@ class CardsService implements ICardService {
       "Received cardDTO[] from cardStore");
 
     return cardDTOs.map(dto => {
-      return new CardContainer(
+      return new CardContainer<TavernCardV2>(
         dto.card,
-        TranslateVisibilityNumberToString(dto.visibility),
-        dto.user_id.toString(),
+        dto.visibility,
+        dto.tagline,
+        dto.user_id,
         dto.created,
-        dto.updated,
-        dto.tagline
+        dto.updated
       )
     });
   }

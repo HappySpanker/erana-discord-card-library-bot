@@ -7,8 +7,7 @@ export type CardUploadRequest = {
     Json: string,
 }
 
-export type CardUploadResponse = ErrorResponse | {
-    Success: true,
+export type CardUploadResponse = {
     Result: CardUploadModel
 }
 
@@ -20,8 +19,7 @@ export type CardUpdateRequest = {
     Json: string | null,
 }
 
-export type CardUpdateResponse = ErrorResponse | {
-    Success: true,
+export type CardUpdateResponse = {
     Result: CardUpdateModel
 }
 

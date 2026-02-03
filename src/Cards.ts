@@ -77,13 +77,15 @@ export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
     // Main data
     public readonly Card: T,
     public readonly Visibility: string,
+    public readonly Tagline: string,
 
     // Tracking
-    public readonly UserId: string,
+    public readonly UserId: number,
     public readonly Created: Temporal.Instant,
     public readonly Updated: Temporal.Instant,
+
     // Enrichments
-    public readonly Tagline: string
+    public readonly CanonicalUserId?: string,
   ) {}
 
   public IsV2(): this is CardContainer<TavernCardV2> {

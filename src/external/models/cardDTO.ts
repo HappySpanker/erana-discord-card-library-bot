@@ -7,7 +7,7 @@ import { TavernCardV2 } from "../../Cards.js"
  */
 export type CardDTO = {
   id: number,
-  visibility: number,
+  visibility: string,
   user_id: number,
   tagline: string,
   card: TavernCardV2,
