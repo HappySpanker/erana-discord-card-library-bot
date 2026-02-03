@@ -80,6 +80,7 @@ export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
     public readonly Tagline: string,
 
     // Tracking
+    public readonly Id: number,
     public readonly UserId: number,
     public readonly Created: Temporal.Instant,
     public readonly Updated: Temporal.Instant,
@@ -95,4 +96,5 @@ export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
   public IsV3(): this is CardContainer<TavernCardV3> {
     return this.Card.spec_version === "3.0";
   }
+
 }

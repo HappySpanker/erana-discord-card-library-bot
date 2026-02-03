@@ -1,4 +1,4 @@
-import { TavernCardV2 } from "../../Cards.js"
+import { CardContainer, TavernCardV2 } from "../../Cards.js"
 
 export type UploadInput = {
     UserId: number,
@@ -13,3 +13,5 @@ export type UploadOutput = {
     Tagline: string,
     Card: TavernCardV2
 }
+
+export type  UpdateInput = Pick<CardContainer, "Id" | "Card" | "Tagline" | "Visibility" | "IsV2">
