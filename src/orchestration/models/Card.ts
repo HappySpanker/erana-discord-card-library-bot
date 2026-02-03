@@ -13,10 +13,10 @@ export type CardUploadResponse = {
 
 export type CardUpdateRequest = {
     CanonicalUserId: string,
-    Identifier: string,
-    Visibility: string | null,
-    Tagline: string | null,
-    Json: string | null,
+    Identifier: number,
+    Visibility?: string,
+    Tagline?: string,
+    Json?: string,
 }
 
 export type CardUpdateResponse = {

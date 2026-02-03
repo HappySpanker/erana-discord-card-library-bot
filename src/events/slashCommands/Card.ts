@@ -36,7 +36,7 @@ export const CardSlashCommandBuilder = new SlashCommandBuilder()
   .addSubcommand(sub => sub
     .setName("update")
     .setDescription("Upload an existing card")
-    .addStringOption(opt => opt
+    .addNumberOption(opt => opt
       .setName("identifier")
       .setRequired(true)
       .setDescription("The identifier of the card you wish to update")
@@ -80,12 +80,12 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
   }
   
   private async update(interaction: ChatInputCommandInteraction): Promise<void> {
-    const identifier = interaction.options.getString("identifier");
+    const identifier = interaction.options.getNumber("identifier");
     const visibility = interaction.options.getString("visibility");
     const tagline = interaction.options.getString("tagline");
-    const card = interaction.options.getAttachment("card");
+    const json = interaction.options.getAttachment("card");
 
-    if (!visibility && !tagline && !card) {
+    if (!visibility && !tagline && !json) {
       await EphemeralReply(interaction, "Guess we're not updating anything!");
       return;
     }
@@ -95,11 +95,12 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
 
     const request: CardUpdateRequest = {
       CanonicalUserId: interaction.user.id,
-      Identifier: identifier,
-      Json: card ? await GetJsonFromAttachment(card) : null,
-      Tagline: tagline,
-      Visibility: visibility
+      Identifier: identifier
     }
+
+    if (visibility) request.Visibility = visibility;
+    if (tagline) request.Tagline = tagline;
+    if (json) request.Json = await GetJsonFromAttachment(json);
 
     // Call orchestrator
     const response = await this.cardOrchestrator.Update(request);

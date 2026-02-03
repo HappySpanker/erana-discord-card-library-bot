@@ -3,6 +3,7 @@ import { logger } from "../logger.js";
 import { ICardStore } from "../external/CardStore.js";
 import { UpdateInput, UploadInput } from "./models/Card.js";
 import { ConvertToCardContainerV2 } from "./utils/CardContainerUtils.js";
+import { UpdateCardDto } from "../external/models/cardDTO.js";
 
 export interface ICardService {
   ListCards(userId: string): Promise<CardContainer<TavernCardV2>[]>;
@@ -40,33 +41,20 @@ class CardsService implements ICardService {
     }
   }
 
-  async Update(request: UpdateInput): Promise<CardContainer<TavernCardV2>> {
-    logger.trace({
-      Id: request.Id,
-      Visibility: request.Visibility,
-      Tagline: request.Tagline.substring(0, 32)
-    },
-    "CardsService.Update");
-
-    if (!request.IsV2()) {
-      const msg = "Card to be updated is not V2";
-      logger.error({
-          Id: request.Id,
-          actual_spec: request.Card.spec,
-          actual_spec_version: request.Card.spec_version,
-        },
-        msg);
-      throw new Error(msg);
-    }
+  async Update(input: UpdateInput): Promise<CardContainer<TavernCardV2>> {
+    logger.trace("CardsService.Update");
 
     // Upload
     try {
-      const dto = await this._cardStore.Upload({
-        id: request.Id,
-        card: request.Card,
-        tagline: request.Tagline,
-        visibility: request.Visibility
-      });
+      const updateCardDTO: UpdateCardDto = {
+        Id: input.Id
+      }
+
+      if (input.Visibility) updateCardDTO.Visibility = input.Visibility;
+      if (input.Tagline) updateCardDTO.Tagline = input.Tagline;
+      if (input.Card) updateCardDTO.Card = input.Card;
+
+      const dto = await this._cardStore.Update(updateCardDTO);
 
       return ConvertToCardContainerV2(dto);
 

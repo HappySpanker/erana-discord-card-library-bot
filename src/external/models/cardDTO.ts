@@ -21,8 +21,9 @@ export type CardDTO = {
  */
 export type UploadCardDto = Omit<CardDTO, "id" | "created" | "updated">;
 
-/**
- * This is for the to-be update cards; user_id, created and update are not meant 
- * to be handled by client updates; so we omit these
- */
-export type UpdateCardDto = Omit<CardDTO, "user_id" | "created" | "updated">;
+export type UpdateCardDto = {
+  Id: number,
+  Visibility?: string,
+  Tagline?: string,
+  Card?: TavernCardV2
+}

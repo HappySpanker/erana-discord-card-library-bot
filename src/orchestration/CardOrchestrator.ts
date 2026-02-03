@@ -5,6 +5,7 @@ import { ICardService } from "../logic/CardService.js";
 import { IUserService } from "../logic/UserService.js";
 import { TavernCardV2 } from "../Cards.js";
 import { ITavernCardService } from "../logic/TavernCardService.js";
+import { UpdateInput } from "../logic/models/Card.js";
 
 export interface ICardOrchestrator {
     Upload(request: CardUploadRequest): Promise<CardUploadResponse>
@@ -57,6 +58,23 @@ class CardOrchestrator implements ICardOrchestrator {
 
     async Update(request: CardUpdateRequest): Promise<CardUpdateResponse> {
         logger.trace("CardOrchestrator.Update");
+
+        let cardV2: TavernCardV2 | undefined;
+
+        if (request.Json) {
+            const card = this.tavernCardService.Parse(request.Json);
+            cardV2 = this.tavernCardService.CastToV2(card);
+        }
+
+        const input: UpdateInput = {
+            Id: request.Identifier
+        }
+
+        if (request.Tagline) input.Tagline = request.Tagline;
+        if (request.Visibility) input.Visibility = request.Visibility;
+        if (cardV2) input.Card = cardV2;
+
+        this.cardService.Update(input);
 
         return {
             Result: {

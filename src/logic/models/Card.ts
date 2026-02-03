@@ -14,4 +14,9 @@ export type UploadOutput = {
     Card: TavernCardV2
 }
 
-export type  UpdateInput = Pick<CardContainer, "Id" | "Card" | "Tagline" | "Visibility" | "IsV2">
+export type  UpdateInput = {
+    Id: number,
+    Visibility?: string,
+    Tagline?: string,
+    Card?: TavernCardV2
+}
