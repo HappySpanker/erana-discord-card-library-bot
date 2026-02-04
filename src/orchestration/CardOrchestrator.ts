@@ -3,12 +3,12 @@ import { logger } from "../logger.js";
 import { CardUpdateRequest, CardUpdateResponse, CardUploadRequest, CardUploadResponse } from "./models/Card.js";
 import { ICardService } from "../logic/CardService.js";
 import { IUserService } from "../logic/UserService.js";
-import { TavernCardV2 } from "../Cards.js";
+import { CardContainer, TavernCardV2 } from "../Cards.js";
 import { ITavernCardService } from "../logic/TavernCardService.js";
 import { UpdateInput } from "../logic/models/Card.js";
 
 export interface ICardOrchestrator {
-    Upload(request: CardUploadRequest): Promise<CardUploadResponse>
+    Upload(request: CardUploadRequest): Promise<CardContainer<TavernCardV2>>
     Update(request: CardUpdateRequest): Promise<CardUpdateResponse>
 }
 
@@ -19,7 +19,7 @@ class CardOrchestrator implements ICardOrchestrator {
         private readonly tavernCardService: ITavernCardService
     ) { }
 
-    async Upload(request: CardUploadRequest): Promise<CardUploadResponse> {
+    async Upload(request: CardUploadRequest): Promise<CardContainer<TavernCardV2>> {
         logger.trace("CardOrchestrator.Upload");
 
         try {
@@ -30,23 +30,12 @@ class CardOrchestrator implements ICardOrchestrator {
     
             const cardV2 = this.tavernCardService.CastToV2(card);
     
-            const output = await this.cardService.Upload({
+            return await this.cardService.Upload({
                 Tagline: request.Tagline,
                 UserId: userId.user_id,
                 Visibility: request.Visibility,
                 Card: cardV2
             })
-    
-            return {
-                Result: {
-                    CanonicalUserId: request.CanonicalUserId,
-                    Name: output.Card.data.name,
-                    Tagline: output.Tagline,
-                    URL: "http:/invalid.invalid",
-                    Created: output.Created,
-                    Updated: output.Updated
-                }
-            };
         } catch (err) {
             logger.error({
                 err,

@@ -144,6 +144,6 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
 
     logger.trace(response);
     
-    await EphemeralReply(interaction, "upload noop")
+    await EphemeralReply(interaction, response.CardId)
   }
 }
