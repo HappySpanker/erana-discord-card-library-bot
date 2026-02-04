@@ -67,7 +67,7 @@ class CardStore implements ICardStore {
             const result = await this._pool.query<CardDTO>(`
 UPDATE public.cards SET
     card = COALESCE($2, card),
-    tagline = COALESCE($3, taglline),
+    tagline = COALESCE($3, tagline),
     visibility = COALESCE($4, visibility)
 WHERE cards.id = $1
 RETURNING *;
