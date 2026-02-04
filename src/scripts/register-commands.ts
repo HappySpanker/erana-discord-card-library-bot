@@ -10,7 +10,7 @@ const rest = new REST({ version: "10" }).setToken(
 async function register() {
   await rest.put(
     Routes.applicationGuildCommands(
-      process.env.CLIENT_ID!,
+      process.env.DISCORD_APPLICATION_ID!,
       process.env.GUILD_ID!
     ),
     {
