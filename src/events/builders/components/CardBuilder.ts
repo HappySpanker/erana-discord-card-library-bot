@@ -17,7 +17,7 @@ export function CardBuilder(cardModel: CardUpdateModel | CardUploadModel): Secti
 
 ${tags}
  
--# 
+-# ID: 
 -# Created: <t:${createdTimestamp}:R>
 -# Updated: <t:${updateTimestamp}:R>`)
     )

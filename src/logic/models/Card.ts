@@ -1,21 +1,21 @@
 import { CardContainer, TavernCardV2 } from "../../Cards.js"
 
 export type UploadInput = {
-    UserId: number,
+    UserId: string,
     Visibility: string,
     Tagline: string,
     Card: TavernCardV2
 }
 
 export type UploadOutput = {
-    UserId: number,
+    UserId: string,
     Visibility: string,
     Tagline: string,
     Card: TavernCardV2
 }
 
 export type  UpdateInput = {
-    Id: number,
+    Id: string,
     Visibility?: string,
     Tagline?: string,
     Card?: TavernCardV2

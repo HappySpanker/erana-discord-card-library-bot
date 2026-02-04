@@ -36,7 +36,7 @@ export const CardSlashCommandBuilder = new SlashCommandBuilder()
   .addSubcommand(sub => sub
     .setName("update")
     .setDescription("Upload an existing card")
-    .addNumberOption(opt => opt
+    .addStringOption(opt => opt
       .setName("identifier")
       .setRequired(true)
       .setDescription("The identifier of the card you wish to update")
@@ -80,7 +80,7 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
   }
   
   private async update(interaction: ChatInputCommandInteraction): Promise<void> {
-    const identifier = interaction.options.getNumber("identifier");
+    const identifier = interaction.options.getString("identifier");
     const visibility = interaction.options.getString("visibility");
     const tagline = interaction.options.getString("tagline");
     const json = interaction.options.getAttachment("card");

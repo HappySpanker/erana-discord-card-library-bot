@@ -56,9 +56,7 @@ class CardStore implements ICardStore {
 
     async Update(dto: UpdateCardDto): Promise<CardDTO> {
         logger.trace({
-            id: dto.Id,
-            visibility: dto.Visibility,
-            tagline: dto.Tagline?.substring(0, 32),
+            id: dto.Id
         },
             "CardStore.Update");
 
@@ -85,14 +83,7 @@ RETURNING *;
 
             return cardDTO;
         } catch (err) {
-            logger.error({
-                id: dto.Id,
-                visibility: dto.Visibility,
-                tagline: dto.Tagline?.substring(0, 32),
-                err
-            },
-                "Error uploading card to database");
-
+            logger.error(err, "Error uploading card to database");
             throw err;
         }
     }

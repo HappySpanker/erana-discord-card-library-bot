@@ -80,8 +80,8 @@ export class CardContainer<T extends AnyTavernCard = AnyTavernCard> {
     public readonly Tagline: string,
 
     // Tracking
-    public readonly Id: number,
-    public readonly UserId: number,
+    public readonly Id: string,
+    public readonly UserId: string,
     public readonly Created: Temporal.Instant,
     public readonly Updated: Temporal.Instant,
 

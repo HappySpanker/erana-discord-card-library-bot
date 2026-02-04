@@ -13,7 +13,7 @@ export type CardUploadResponse = {
 
 export type CardUpdateRequest = {
     CanonicalUserId: string,
-    Identifier: number,
+    Identifier: string,
     Visibility?: string,
     Tagline?: string,
     Json?: string,

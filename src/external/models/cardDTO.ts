@@ -6,9 +6,9 @@ import { TavernCardV2 } from "../../Cards.js"
  * Node-PG is case-sensitive enough for this.
  */
 export type CardDTO = {
-  id: number,
+  id: string,
   visibility: string,
-  user_id: number,
+  user_id: string,
   tagline: string,
   card: TavernCardV2,
   created: Temporal.Instant,
@@ -22,7 +22,7 @@ export type CardDTO = {
 export type UploadCardDto = Omit<CardDTO, "id" | "created" | "updated">;
 
 export type UpdateCardDto = {
-  Id: number,
+  Id: string,
   Visibility?: string,
   Tagline?: string,
   Card?: TavernCardV2

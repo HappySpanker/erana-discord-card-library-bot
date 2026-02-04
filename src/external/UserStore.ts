@@ -6,7 +6,7 @@ export interface IUserStore {
 }
 
 export type UserDTO = {
-  user_id: number,
+  user_id: string,
   canonical_user_id: string
 }
 
@@ -25,9 +25,9 @@ export class UserStore implements IUserStore {
       const response = await this._pool.query<UserDTO>(
 `SELECT
   u.id as user_id,
-  u.canonical_user_id
+  u.discord_user_id
 FROM users AS u
-WHERE u.canonical_user_id = $1`,
+WHERE u.discord_user_id = $1`,
         [ canonicalUserId ]);
 
       const result = response.rows[0];
