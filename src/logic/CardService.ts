@@ -3,7 +3,7 @@ import { logger } from "../logger.js";
 import { ICardStore } from "../external/CardStore.js";
 import { UpdateInput, UploadInput } from "./models/Card.js";
 import { ConvertToCardContainerV2 } from "./utils/CardContainerUtils.js";
-import { UpdateCardDto } from "../external/models/cardDTO.js";
+import { CardDTO } from "../external/models/cardDTO.js";
 
 export interface ICardService {
   ListCards(userId: string): Promise<CardContainer<TavernCardV2>[]>;
@@ -46,15 +46,15 @@ class CardsService implements ICardService {
 
     // Upload
     try {
-      const updateCardDTO: UpdateCardDto = {
-        Id: input.Id
+      const cardDTO: Partial<CardDTO> = {
+        id: input.Id
       }
 
-      if (input.Visibility) updateCardDTO.Visibility = input.Visibility;
-      if (input.Tagline) updateCardDTO.Tagline = input.Tagline;
-      if (input.Card) updateCardDTO.Card = input.Card;
+      if (input.Visibility) cardDTO.visibility = input.Visibility;
+      if (input.Tagline) cardDTO.tagline = input.Tagline;
+      if (input.Card) cardDTO.card = input.Card;
 
-      const dto = await this._cardStore.Update(updateCardDTO);
+      const dto = await this._cardStore.Update(cardDTO);
 
       return ConvertToCardContainerV2(dto);
 

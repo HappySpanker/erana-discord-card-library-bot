@@ -7,7 +7,7 @@ import { Temporal } from "@js-temporal/polyfill";
 export interface ICardStore {
     ListByUser(userId: string): Promise<Array<CardDTO>>
     Upload(dto: Partial<CardDTO>): Promise<CardDTO>
-    Update(dto: UpdateCardDto): Promise<CardDTO>
+    Update(dto: Partial<CardDTO>): Promise<CardDTO>
 }
 
 class CardStore implements ICardStore {
@@ -54,9 +54,9 @@ class CardStore implements ICardStore {
         }
     }
 
-    async Update(dto: UpdateCardDto): Promise<CardDTO> {
+    async Update(dto: Partial<CardDTO>): Promise<CardDTO> {
         logger.trace({
-            id: dto.Id
+            id: dto.id
         },
             "CardStore.Update");
 
@@ -71,10 +71,10 @@ WHERE cards.id = $1
 RETURNING *;
         `,
                 [
-                    dto.Id,
-                    dto.Card,
-                    dto.Tagline,
-                    dto.Visibility
+                    dto.id,
+                    dto.card,
+                    dto.tagline,
+                    dto.visibility
                 ]
             );
 
