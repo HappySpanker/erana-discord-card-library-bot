@@ -24,18 +24,20 @@ class CardOrchestrator implements ICardOrchestrator {
 
         try {
             // Get logical user ID from canonical user ID
-            const userId = await this.userService.GetUserModelByCanonicalUserId(request.CanonicalUserId);
+            const userId = await this.userService.GetUserIdByCanonicalUserId(request.CanonicalUserId);
     
             const card = this.tavernCardService.Parse(request.Json);
     
             const cardV2 = this.tavernCardService.CastToV2(card);
-    
-            return await this.cardService.Upload({
+
+            const cardContainer: Partial<CardContainer<TavernCardV2>> = {
+                Card: cardV2,
                 Tagline: request.Tagline,
-                UserId: userId.user_id,
-                Visibility: request.Visibility,
-                Card: cardV2
-            })
+                UserId: userId,
+                Visibility: request.Visibility
+            }
+    
+            return await this.cardService.Upload(cardContainer)
         } catch (err) {
             logger.error({
                 err,

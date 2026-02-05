@@ -4,10 +4,11 @@ import { ICardStore } from "../external/CardStore.js";
 import { UpdateInput, UploadInput } from "./models/Card.js";
 import { ConvertToCardContainerV2 } from "./utils/CardContainerUtils.js";
 import { CardDTO } from "../external/models/cardDTO.js";
+import { assertExists } from "../utils/Assertions.js";
 
 export interface ICardService {
   ListCards(userId: string): Promise<CardContainer<TavernCardV2>[]>;
-  Upload(request: UploadInput): Promise<CardContainer<TavernCardV2>>;
+  Upload(request: Partial<CardContainer<TavernCardV2>>): Promise<CardContainer<TavernCardV2>>;
   Update(request: UpdateInput): Promise<CardContainer<TavernCardV2>>;
 }
 
@@ -16,22 +17,24 @@ class CardsService implements ICardService {
     private readonly _cardStore: ICardStore
   ) { }
 
-  async Upload(request: UploadInput): Promise<CardContainer<TavernCardV2>> {
-    logger.trace({
-      UserId: request.UserId,
-      Visibility: request.Visibility,
-      Tagline: request.Tagline.substring(0, 32)
-    },
-    "CardsService.Upload");
+  async Upload(request: Partial<CardContainer<TavernCardV2>>): Promise<CardContainer<TavernCardV2>> {
+    logger.trace("CardsService.Upload");
 
     // Upload
     try {
-      const dto = await this._cardStore.Upload({
-        user_id: request.UserId,
+      assertExists(request.Card, "Card must be set");
+      assertExists(request.Tagline, "Tagline must be set");
+      assertExists(request.UserId, "UserId must be set");
+      assertExists(request.Visibility, "Visibility must be set");
+
+      const inputDTO: Partial<CardDTO> = {
         card: request.Card,
         tagline: request.Tagline,
+        user_id: request.UserId,
         visibility: request.Visibility
-      });
+      }
+
+      const dto = await this._cardStore.Upload(inputDTO);
 
       return ConvertToCardContainerV2(dto);
 

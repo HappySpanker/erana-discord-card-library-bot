@@ -1,7 +1,6 @@
 import { Pool } from "pg";
 import { logger } from "../logger.js";
-import { CardDTO, UpdateCardDto } from "./models/cardDTO.js";
-import { TavernCardV2 } from "../Cards.js";
+import { CardDTO } from "./models/cardDTO.js";
 import { Temporal } from "@js-temporal/polyfill";
 
 export interface ICardStore {
@@ -17,12 +16,7 @@ class CardStore implements ICardStore {
     ) { }
 
     async Upload(dto: Partial<CardDTO>): Promise<CardDTO> {
-        logger.trace({
-            userId: dto.user_id,
-            visibility: dto.visibility,
-            tagline: dto.tagline?.substring(0, 32),
-        },
-            "CardStore.Upload");
+        logger.trace("CardStore.Upload");
 
         // Try to upload card
         try {
@@ -42,14 +36,7 @@ class CardStore implements ICardStore {
 
             return cardDTO;
         } catch (err) {
-            logger.error({
-                userId: dto.user_id,
-                visibility: dto.visibility,
-                tagline: dto.tagline?.substring(0, 32),
-                err
-            },
-                "Error uploading card to database");
-
+            logger.error(err, "Error uploading card to database");
             throw err;
         }
     }

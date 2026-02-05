@@ -7,7 +7,7 @@ export interface IUserStore {
 
 export type UserDTO = {
   user_id: string,
-  canonical_user_id: string
+  discord_user_id: string
 }
 
 export class UserStore implements IUserStore {

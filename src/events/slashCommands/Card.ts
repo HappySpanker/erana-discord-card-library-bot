@@ -105,8 +105,6 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
     // Call orchestrator
     const response = await this.cardOrchestrator.Update(request);
 
-    logger.trace(response);
-
     await EphemeralReply(interaction, "update noop")
   }
 
@@ -141,8 +139,6 @@ export class CardSlashCommandHandler implements ISlashCommandHandler {
 
     // Call orchestrator
     const response = await this.cardOrchestrator.Upload(request);
-
-    logger.trace(response);
     
     await EphemeralReply(interaction, response.CardId)
   }
